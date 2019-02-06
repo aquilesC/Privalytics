@@ -97,9 +97,12 @@ class Tracker(models.Model):
         page = parsed_url.path
         utm_source = queries.get('utm_source')
 
-        parsed_referrer = urlparse(data['referrer'])
-        referrer_url = parsed_referrer.hostname
-        referrer_page = parsed_referrer.path
+        referrer_url = None
+        referrer_page = None
+        if data.get('referrer'):
+            parsed_referrer = urlparse(data['referrer'])
+            referrer_url = parsed_referrer.hostname
+            referrer_page = parsed_referrer.path
 
 
         tracker = cls(
@@ -119,8 +122,8 @@ class Tracker(models.Model):
 
             screen_width=int(data.get('width', 0)),
             screen_height=int(data.get('height', 0)),
-            referrer_url=referrer_url or None,
-            referrer_page=referrer_page or None,
+            referrer_url=referrer_url,
+            referrer_page=referrer_page,
         )
 
         return tracker
