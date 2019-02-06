@@ -18,10 +18,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'tracker.apps.TrackerConfig',
-    'django_user_agents'
+    'django_user_agents',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -110,3 +112,9 @@ STATICFILES_DIRS = [
 ]
 
 GEOIP_PATH = os.path.join(BASE_DIR, 'geolite')
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOW_METHODS = (
+    'POST',
+)
