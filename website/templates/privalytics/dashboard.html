@@ -130,7 +130,7 @@
     {% endif %}
 
     <script>
-        var requests = '{{ requests_count|safe }}';
+        var requests = '{{ requests|safe }}';
     </script>
     <script src="{% static 'js/requests_graph.js' %}"></script>
 {% endblock %}

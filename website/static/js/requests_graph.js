@@ -38,7 +38,7 @@ var svg = d3.select("#requests-graph").append("svg")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 var data = JSON.parse(requests);
-
+console.log(data);
 data.forEach(function(d) {
     d.date = parseDate(d.date);
     d.requests = +d.requests;
