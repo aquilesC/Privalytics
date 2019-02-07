@@ -57,11 +57,8 @@ class StatsView(View):
 
         extra_context['countries_count'] = json.dumps(countries_count)
 
-        current_results = queryset.annotate(
-            date=TruncDate('timestamp'),
-            hour=Extract('timestamp', 'hour'),
-            )\
-            .values('date', 'hour')\
+        current_results = queryset\
+            .values('timestamp')\
             .annotate(requests=Count('pk', 'date'))
 
         # current_results = queryset\
@@ -70,8 +67,9 @@ class StatsView(View):
         #     .annotate(requests=Count('pk', 'date'))
 
         for item in current_results:
-            item['date'] = '{date}'\
-                .format(date=item.pop('date'))
+            item['x'] = '{date}'\
+                .format(date=item.pop('timestamp'))
+            item['y'] = item.pop('requests')
 
         print(current_results)
         extra_context['requests'] = json.dumps(list(current_results))
@@ -93,3 +91,6 @@ class StatsView(View):
         extra_context['top_pages'] = top_pages
 
         return render(request, self.template_name, extra_context)
+
+class BaseChart(StatsView):
+    template_name = 'privalytics/base_charts.html'
