@@ -1,5 +1,6 @@
 import json
 import time
+from collections import Counter
 
 from django.shortcuts import render
 from django.views import View
@@ -74,12 +75,20 @@ class StatsView(View):
 
         extra_context['requests_count'] = json.dumps(list(current_results))
 
-        devices_count = list(queryset.exclude(type_device__exact=Tracker.UNKNOWN).values('type_device').annotate(
-            count=Count('id')).order_by('-count'))[:10]
+        devices_count = list(
+            queryset.exclude(type_device__exact=Tracker.UNKNOWN).values(
+                'type_device').annotate(
+                count=Count('type_device')).order_by('-count'))[:10]
 
         for dev in devices_count:
-            dev['type_device'] = Tracker.DEVICE_CHOICES[dev['type_device']][1]
+            dev['type_device'] = Tracker.DEVICE_CHOICES[dev['type_device']-1][1]
 
+        # devices_type = Tracker.objects.values_list('type_device')
+        # print(devices_type)
+        # devices_count = Counter(devices_type)
+        # print(devices_count)
+        # for dev in devices_count:
+        #     print(Tracker.get_type_device_display(dev['type_device']))
         extra_context['devices_count'] = json.dumps(devices_count)
 
         top_pages = Tracker.objects.all().values('page').annotate(total=Count('page')).order_by('-total')[:10]
