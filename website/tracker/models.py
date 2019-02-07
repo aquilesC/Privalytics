@@ -43,7 +43,7 @@ class Tracker(models.Model):
     page = models.CharField(max_length=255, blank=True)
     # Query arguments, such as utm_source
     # TODO: Find out what arguments are important for users
-    utm_source = models.CharField(max_length=255, null=True)
+    utm_source = models.CharField(max_length=255, null=True, blank=True)
 
     screen_height = models.IntegerField(null=True)
     screen_width = models.IntegerField(null=True)
