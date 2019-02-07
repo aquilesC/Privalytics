@@ -8,7 +8,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.views.generic import TemplateView
-from django.db.models.functions import TruncDate, Extract
+from django.db.models.functions import TruncDate, Extract, TruncHour
 from django.db.models import Count
 
 from logs.models import TimeToStore
@@ -58,7 +58,8 @@ class StatsView(View):
         extra_context['countries_count'] = json.dumps(countries_count)
 
         current_results = queryset\
-            .values('timestamp')\
+            .annotate(hour=TruncHour('timestamp'))\
+            .values('hour')\
             .annotate(requests=Count('pk', 'date'))
 
         # current_results = queryset\
@@ -68,7 +69,7 @@ class StatsView(View):
 
         for item in current_results:
             item['t'] = '{date}'\
-                .format(date=item.pop('timestamp'))
+                .format(date=item.pop('hour'))
             item['y'] = item.pop('requests')
 
         print(current_results)
