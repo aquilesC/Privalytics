@@ -18,6 +18,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'tracker.apps.TrackerConfig',
+    'logs.apps.LogsConfig',
     'django_user_agents',
     'corsheaders',
 ]
@@ -110,7 +111,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 
 
 GEOIP_PATH = os.path.join(BASE_DIR, 'geolite')
