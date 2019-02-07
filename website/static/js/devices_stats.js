@@ -29,7 +29,7 @@ var tip = d3.tip()
   .attr('class', 'd3-tip')
   .offset([-10, 0])
   .html(function(d) {
-    return "<strong>Requests:</strong> <span style='color:red'>" + d.count + "</span>";
+    return "<strong>Visits:</strong> <span style='color:red'>" + d.count + "</span>";
   });
 
 var svg = d3.select("#devices-stats").append("svg")
@@ -42,7 +42,7 @@ svg.call(tip);
 
 var data = JSON.parse(devices);
 
-x.domain(data.map(function(d) { return d.device_brand; }));
+x.domain(data.map(function(d) { return d.device_family; }));
 y.domain([0, d3.max(data, function(d) { return d.count; })]);
 
 svg.append("g")

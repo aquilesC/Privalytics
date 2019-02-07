@@ -44,7 +44,7 @@ new Datamap({
             }
             return ['<div class="hoverinfo">',
                 '<strong>', geo.properties.name, '</strong>',
-                '<br>Requests: <strong>', data.requestsPerCountry, '</strong>',
+                '<br>Visits: <strong>', data.requestsPerCountry, '</strong>',
                 '</div>'].join('');
         }
     }

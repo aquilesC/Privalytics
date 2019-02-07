@@ -1,45 +1,99 @@
 {% extends 'privalytics/base.html' %}
 {% load static %}
+{% block custom_head %}
+    <style>.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
 
+.bar {
+  fill: orange;
+}
+
+.bar:hover {
+  fill: orangered ;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+</style>
+{% endblock %}
 {% block content %}
     <script src="{% static 'js/vendor/d3/d3.min.js' %}"></script>
     <script src="{% static 'js/vendor/d3-tip/d3-tip.min.js' %}"></script>
     <script src="{% static 'js/vendor/topojson/topojson.min.js' %}"></script>
     <script src="{% static 'js/vendor/datamaps/datamaps.world.min.js' %}"></script>
-    <script type="text/javascript">
-        $(function () {
-
-            var start = moment().subtract(29, 'days');
-            var end = moment();
-
-            function cb(start, end) {
-                $('#id_date_range_picker span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-            }
-
-            $('#id_date_range').daterangepicker({
-                startDate: start,
-                endDate: end,
-                ranges: {
-                    'Today': [moment(), moment()],
-                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                    'This Month': [moment().startOf('month'), moment().endOf('month')],
-                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-                }
-            }, cb);
-
-            cb(start, end);
-
-        });
-    </script>
+    <section class="generic-banner"><p class="py-3">&nbsp;</p></section>
 
     <section class="about-area section-gap">
         <div class="container">
-            <div style="overflow: hidden; width: 100%">
-                <div id="world-map" class="stats-widget" style="width: 700px; height: 475px;"></div>
-                <div id="devices-stats" class="stats-widget"></div>
-                <div id="requests-graph" class="graph-widget"></div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            Visitor's map
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <div id="world-map" class="stats-widget" style="width: 500px; height: 325px;"></div>
+                            </li>
+
+                        </ul>
+                    </div>
+
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            Devices Used
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <div id="devices-stats" class="stats-widget"></div>
+                            </li>
+
+                        </ul>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-5">
+                    <div id="requests-graph" class="graph-widget"></div>
+                </div>
             </div>
         </div>
 
