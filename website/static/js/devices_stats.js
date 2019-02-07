@@ -42,7 +42,7 @@ svg.call(tip);
 
 var data = JSON.parse(devices);
 
-x.domain(data.map(function(d) { return d.device_family; }));
+x.domain(data.map(function(d) { return d.type_device; }));
 y.domain([0, d3.max(data, function(d) { return d.count; })]);
 
 svg.append("g")
@@ -63,7 +63,7 @@ svg.selectAll(".bar")
     .data(data)
     .enter().append("rect")
     .attr("class", "bar")
-    .attr("x", function(d) { return x(d.device_brand); })
+    .attr("x", function(d) { return x(d.type_device); })
     .attr("width", x.rangeBand())
     .attr("y", function(d) { return y(d.count); })
     .attr("height", function(d) { return height - y(d.count); })
