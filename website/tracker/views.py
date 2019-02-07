@@ -67,7 +67,7 @@ class StatsView(View):
         #     .annotate(requests=Count('pk', 'date'))
 
         for item in current_results:
-            item['x'] = '{date}'\
+            item['t'] = '{date}'\
                 .format(date=item.pop('timestamp'))
             item['y'] = item.pop('requests')
 

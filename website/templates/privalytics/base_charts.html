@@ -10,19 +10,20 @@
 <canvas id="myChart" width="800" height="200"></canvas>
 <script>
     var requests = '{{ requests|safe }}';
-    var data = JSON.parse(requests);
-
-    data.forEach(function (d) {
-        d.x = moment(d.x);
-        {#d.y = 25;#}
-    });
-    console.log(data);
+    var data = {
+        datasets: [
+            {
+                label: "Site Registrations in the Last 30 Days",
+                data: {{ requests|safe }}
+            }
+        ]
+    }
 </script>
 
 <script>
     var ctx = document.getElementById("myChart");
     var myChart = new Chart(ctx, {
-        type: 'bar',
+        type: 'line',
         responsive: true,
         data: data,
         options: {
@@ -32,7 +33,7 @@
                     time: {
                         unit: 'hour'
                     },
-                    distribution: 'series'
+
                 }],
                 yAxes: [{
                     ticks: {
