@@ -1,13 +1,21 @@
 import json
 import time
 
+from django.shortcuts import render
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+from django.views.generic import TemplateView
+from django.db.models.functions import TruncDate
+from django.db.models import Count
 
 from logs.models import TimeToStore
 from tracker.models import Tracker
+from django_countries import countries
+
+class Index(TemplateView):
+    template_name = 'privalytics/index.html'
 
 
 class NewTrackView(View):
@@ -28,3 +36,50 @@ class NewTrackView(View):
         time_log.save()
         return JsonResponse({'message': 'OK'}, status=200)
 
+
+class StatsView(View):
+    template_name = 'privalytics/dashboard.html'
+
+    def get(self, request, *args, **kwargs):
+        extra_context = {}
+        countries_count = []
+
+        queryset = Tracker.objects.all()
+
+        trackers = queryset.values('country').annotate(
+            trackers=Count('id')).order_by()
+
+        for track in trackers:
+            countries_count.append(
+                [countries.alpha3(track['country']), track['trackers']])
+
+        extra_context['countries_count'] = json.dumps(countries_count)
+
+        # current_results = queryset.annotate(
+        #     date=TruncDate('timestamp'),
+        #     hour=Extract('timestamp', 'hour'),
+        #     minute=Extract('timestamp', 'minute')
+        # ).values('date', 'hour', 'minute'
+        #          ).annotate(requests=Count('pk', 'date'))
+
+        current_results = queryset.annotate(
+            date=TruncDate('timestamp'),
+        ).values('date'
+                 ).annotate(requests=Count('pk', 'date'))
+
+        for item in current_results:
+            item['date'] = '{date}'.format(
+                date=item.pop('date')
+            )
+
+        extra_context['requests_count'] = json.dumps(list(current_results))
+
+        devices_count = list(queryset.exclude(device_family__exact='').values('device_family').annotate(
+            count=Count('id')).order_by('-count'))[:10]
+
+        extra_context['devices_count'] = json.dumps(devices_count)
+
+        top_pages = Tracker.objects.all().values('page').annotate(total=Count('page')).order_by('-total')[:10]
+        extra_context['top_pages'] = top_pages
+
+        return render(request, self.template_name, extra_context)

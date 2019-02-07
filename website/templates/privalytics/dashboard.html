@@ -1,0 +1,82 @@
+{% extends 'privalytics/base.html' %}
+{% load static %}
+
+{% block content %}
+    <script src="{% static 'js/vendor/d3/d3.min.js' %}"></script>
+    <script src="{% static 'js/vendor/d3-tip/d3-tip.min.js' %}"></script>
+    <script src="{% static 'js/vendor/topojson/topojson.min.js' %}"></script>
+    <script src="{% static 'js/vendor/datamaps/datamaps.world.min.js' %}"></script>
+    <script type="text/javascript">
+        $(function () {
+
+            var start = moment().subtract(29, 'days');
+            var end = moment();
+
+            function cb(start, end) {
+                $('#id_date_range_picker span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+            }
+
+            $('#id_date_range').daterangepicker({
+                startDate: start,
+                endDate: end,
+                ranges: {
+                    'Today': [moment(), moment()],
+                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                }
+            }, cb);
+
+            cb(start, end);
+
+        });
+    </script>
+
+    <section class="about-area section-gap">
+        <div class="container">
+            <div style="overflow: hidden; width: 100%">
+                <div id="world-map" class="stats-widget" style="width: 700px; height: 475px;"></div>
+                <div id="devices-stats" class="stats-widget"></div>
+                <div id="requests-graph" class="graph-widget"></div>
+            </div>
+        </div>
+
+        <div class="container">
+            <table class="table">
+                <thead>
+                <tr>
+                    <td>Page</td>
+                    <td>Visits</td>
+                </tr>
+                </thead>
+                {% for page in top_pages %}
+                    <tr>
+                        <td>{{ page.page }}</td>
+                        <td>{{ page.total }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </section>
+    {# Countries statistics #}
+    {% if countries_count %}
+        <script>
+            var countries = {{ countries_count|safe }};
+        </script>
+        <script src="{% static 'js/world_map.js' %}"></script>
+    {% endif %}
+    {# Devices statistics #}
+    {% if devices_count %}
+        <script>
+            var devices = '{{ devices_count|safe }}';
+        </script>
+        <script src="{% static 'js/devices_stats.js' %}"></script>
+    {% endif %}
+
+    <script>
+        var requests = '{{ requests_count|safe }}';
+    </script>
+    <script src="{% static 'js/requests_graph.js' %}"></script>
+{% endblock %}
