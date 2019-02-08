@@ -1,11 +1,28 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.contrib.gis.geoip2 import GeoIP2, GeoIP2Exception
 from django.http import QueryDict
 
 from urllib.parse import urlparse
+
+from django.utils.timezone import now
 from ipware.ip import get_real_ip
 from django_countries.fields import CountryField
 from django_user_agents.utils import get_user_agent
+
+
+class Website(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    website_url = models.URLField(unique=True)
+
+    def get_top_pages(self, start_date=0, stop_date=0):
+        if stop_date == 0:
+            stop_date = now()
+        pages = self.trackers.filter(timestamp__gte=start_date, timestamp__lte=stop_date).values('page').order_by('-timestamp')
+        return pages
+
+    def __str__(self):
+        return "Website: <{}>".format(self.website_url)
 
 
 class Tracker(models.Model):
@@ -39,6 +56,7 @@ class Tracker(models.Model):
 
     # The domain of the request (everything up to the first '/')
     url = models.URLField()
+    website = models.ForeignKey(Website, on_delete=models.SET_NULL, to_field='website_url',default='pythonforthelab.com', null=True, related_name='trackers')
     # The page visited (everything after the first '/')
     page = models.CharField(max_length=255, blank=True)
     # Query arguments, such as utm_source
@@ -129,4 +147,4 @@ class Tracker(models.Model):
         return tracker
 
     def __str__(self):
-        return "Tracker {} on page {}{}".format(self.pk, self.url, self.page)
+        return "Tracker {} on page {}{}".format(self.get_type_device_display(), self.url, self.page)
