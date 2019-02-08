@@ -60,7 +60,7 @@ class StatsView(View):
         current_results = queryset\
             .annotate(hour=TruncHour('timestamp'))\
             .values('hour')\
-            .annotate(requests=Count('pk'))
+            .annotate(requests=Count('pk')).order_by('timestamp')
 
         # current_results = queryset\
         #     .annotate(date=TruncDate('timestamp'))\
