@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'tracker.apps.TrackerConfig',
     'logs.apps.LogsConfig',
     'django_user_agents',
+    'accounts',
     'corsheaders',
 ]
 
