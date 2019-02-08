@@ -60,7 +60,7 @@ class StatsView(View):
         current_results = queryset\
             .annotate(hour=TruncHour('timestamp'))\
             .values('hour')\
-            .annotate(requests=Count('pk')).order_by('timestamp')
+            .annotate(requests=Count('pk')).order_by('hour')
 
         # current_results = queryset\
         #     .annotate(date=TruncDate('timestamp'))\
@@ -92,6 +92,7 @@ class StatsView(View):
         extra_context['top_pages'] = top_pages
 
         return render(request, self.template_name, extra_context)
+
 
 class BaseChart(StatsView):
     template_name = 'privalytics/base_charts.html'
