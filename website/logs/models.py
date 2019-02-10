@@ -1,6 +1,20 @@
 from django.db import models
 
 
+class AccountTypeSelected(models.Model):
+    BASIC = 1
+    ADVANCED = 2
+    OTHER = 3
+    ACCOUNT_TYPE = (
+        (BASIC, 'basic'),
+        (ADVANCED, 'advanced'),
+    )
+    timestamp = models.DateTimeField(auto_now_add=True)
+    account_type = models.IntegerField(choices=ACCOUNT_TYPE, null=True, blank=True)
+
+    def __str__(self):
+        return "Account {}".format(self.account_type)
+
 class TimeToStore(models.Model):
     """Measures the time it takes for the view to store a tracker event.
     """

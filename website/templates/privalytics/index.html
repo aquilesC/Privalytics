@@ -1,5 +1,9 @@
 {% extends 'privalytics/base.html' %}
 {% load static %}
+{% block custom_css %}
+    <link href="{% static 'privalytics/css/pricing.css' %}" rel="stylesheet">
+    <link href="{% static 'privalytics/css/showcase.css' %}" rel="stylesheet">
+{% endblock %}
 {% block content %}
 
     {% include 'privalytics/header_index.html' %}

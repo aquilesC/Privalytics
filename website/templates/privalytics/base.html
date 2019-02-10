@@ -19,8 +19,8 @@
 
     <!-- Custom styles for this template -->
     <link href="{% static 'privalytics/css/scrolling-nav.css' %}" rel="stylesheet">
-    <link href="{% static 'privalytics/css/pricing.css' %}" rel="stylesheet">
-    <link href="{% static 'privalytics/css/showcase.css' %}" rel="stylesheet">
+    {% block custom_css %}
+    {% endblock %}
 </head>
 
 <body id="page-top">

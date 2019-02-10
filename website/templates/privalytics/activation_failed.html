@@ -1,0 +1,13 @@
+{% extends 'privalytics/base.html' %}
+{% block content %}
+    {% include 'privalytics/header_index.html' %}
+    <section id="activation-failed">
+        <div class="container">
+            <h1>E-mail validation failed</h1>
+            <p>The link you followed is no longer valid. Either because you already clicked on it or because to long has
+                passed since we created it.</p>
+            <p>If you failed to verify your email in the first 30 days since you registered, we may have removed you
+                from our database. Please register again.</p>
+        </div>
+    </section>
+{% endblock %}

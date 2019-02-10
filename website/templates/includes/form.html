@@ -1,0 +1,20 @@
+{% load widget_tweaks %}
+{% for field in form %}
+    <div class="form-label-group">
+        {% if form.is_bound %}
+            {% if field.errors %}
+                {% render_field field class="form-control is-invalid" placeholder=field.label %}
+                {% for error in field.errors %}
+                    <div class="invalid-feedback">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            {% else %}
+                {% render_field field class="form-control is-valid" placeholder=field.label %}
+            {% endif %}
+        {% else %}
+            {% render_field field class="form-control" placeholder=field.label %}
+        {% endif %}
+        {{ field.label_tag }}
+    </div>
+{% endfor %}
