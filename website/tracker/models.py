@@ -18,113 +18,74 @@ from django_countries import countries
 
 
 class Website(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    website_url = models.URLField(unique=True)
+    owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='websites')
+    website_url = models.CharField(unique=True, max_length=255, blank=False, null=False, help_text='The url of your website')
+    website_name = models.CharField(max_length=255, default='', blank=True, help_text='The name of your website')
+
+    @property
+    def monthly_unique(self):
+        """ Calculate number of visits in the last month.
+        """
+        return self.get_uniques(now() - timedelta(days=30), now())
+
+    @property
+    def monthly_page_views(self):
+        """ Calculate number of visits in the last month.
+        """
+        return self.get_page_views(now()-timedelta(days=30), now())
 
     @property
     def visits_hour(self):
         """Calculates visits per hour in the last 48 hours.
-        TODO: It should limit the time range that it generates
         """
-
-        current_results = self.trackers \
-            .filter(timestamp__gte=now() - timedelta(days=2)) \
-            .annotate(hour=TruncHour('timestamp')) \
-            .values('hour') \
-            .annotate(requests=Count('pk')).order_by('-hour')
-
-        for item in current_results:
-            item['t'] = '{date}' \
-                .format(date=item.pop('hour'))
-            item['y'] = item.pop('requests')
-
-        return json.dumps(list(current_results))
+        return json.dumps(self.get_hourly_visits(now() - timedelta(days=2), now()))
 
     @property
     def visits_day(self):
         """Calculates visits per day in the last 30 days.
-        TODO: It should limit the time range that it generates
         """
-
-        current_results = self.trackers \
-            .filter(timestamp__gte=now() - timedelta(days=30)) \
-            .exclude(type_device=Tracker.BOT) \
-            .exclude(referrer_url__contains=self.website_url)\
-            .annotate(day=TruncDay('timestamp')) \
-            .values('day') \
-            .annotate(requests=Count('pk')).order_by('-day')
-
-        for item in current_results:
-            item['t'] = '{date}' \
-                .format(date=item.pop('day'))
-            item['y'] = item.pop('requests')
-
-        return json.dumps(list(current_results))
+        return json.dumps(self.get_daily_visits(now()-timedelta(days=30), now()))
 
     @property
     def visits_month(self):
         """ Calculates the number of visits per month. In the last year.
         """
-
-        current_results = self.trackers \
-            .filter(timestamp__gte=now() - timedelta(days=365)) \
-            .exclude(type_device=Tracker.BOT) \
-            .annotate(month=TruncMonth('timestamp')) \
-            .values('month') \
-            .annotate(requests=Count('pk')).order_by('-month')
-
-        for item in current_results:
-            item['t'] = '{date}' \
-                .format(date=item.pop('month'))
-            item['y'] = item.pop('requests')
-
-        return json.dumps(list(current_results))
+        return json.dumps(self.get_daily_visits(now()-timedelta(days=365), now()))
 
     @property
     def popular_pages_30_days(self):
-        pages = self.trackers \
-                    .filter(timestamp__gte=now() - timedelta(days=30)) \
-                    .exclude(type_device=Tracker.BOT) \
-                    .values('page') \
-                    .annotate(visits=Count('page')) \
-                    .order_by('-visits')[:20]
-
-        return pages
-
+        return self.get_top_pages(now() - timedelta(days=30), now())
 
     @property
     def top_referrers_30_days(self):
-        referrers = self.trackers.exclude(referrer_url='') \
-                        .filter(timestamp__gte=now() - timedelta(days=30)) \
-                        .exclude(referrer_url__contains=self.website_url) \
-                        .values('referrer_url') \
-                        .annotate(visits=Count('referrer_url')) \
-                        .order_by('-visits')[:10]
-
-        return referrers
-
+        return self.get_top_referrers(now() - timedelta(days=30), now())
 
     @property
     def countries_30_days(self):
-        trackers = self.trackers \
-            .filter(timestamp__gte=now() - timedelta(days=30)) \
-            .exclude(country='') \
-            .values('country') \
-            .annotate(trackers=Count('id')) \
-            .order_by()
-
-        countries_count = []
-        for track in trackers:
-            countries_count.append(
-                [countries.alpha3(track['country']), track['trackers']])
-
-        return json.dumps(countries_count)
-
+        return json.dumps(self.get_top_countries(now() - timedelta(days=30), now()))
 
     @property
     def popular_devices_30_days(self):
+        return json.dumps(self.get_top_devices(now() - timedelta(days=30), now()))
+
+    @property
+    def top_referrer_week(self):
+        return self.get_top_referrers(now()-timedelta(days=7), now())[0]
+
+
+    def get_top_pages(self, start_date, end_date):
+        pages = self.trackers \
+                    .filter(timestamp__gte=start_date, timestamp__lte=end_date) \
+                    .exclude(type_device=Tracker.BOT) \
+                    .values('page') \
+                    .annotate(visits=Count('page')) \
+                    .order_by('-visits')[:10]
+
+        return pages
+
+    def get_top_devices(self, start_date, end_date):
         trackers = self.trackers \
-            .filter(timestamp__gte=now() - timedelta(days=30)) \
+            .filter(timestamp__gte=start_date, timestamp__lte=end_date) \
             .exclude(type_device=Tracker.BOT) \
             .exclude(type_device=Tracker.UNKNOWN) \
             .values('type_device') \
@@ -136,11 +97,124 @@ class Website(models.Model):
         for tracker in trackers:
             devices_list.append(Tracker.DEVICE_CHOICES[tracker['type_device'] - 1][1])
             visits_list.append(tracker['number'])
-        return json.dumps({'device_label': devices_list, 'visits_data': visits_list})
+        return {'device_label': devices_list, 'visits_data': visits_list}
 
+    def get_top_os(self, start_date, end_date):
+        trackers = self.trackers \
+            .filter(timestamp__gte=start_date, timestamp__lte=end_date) \
+            .exclude(type_device=Tracker.BOT) \
+            .exclude(type_device=Tracker.UNKNOWN) \
+            .values('operating_system') \
+            .annotate(number=Count('id')) \
+            .order_by('-number')[:10]
+
+        visits_list = []
+        os_list = []
+        for tracker in trackers:
+            os_list.append(tracker['operating_system'])
+            visits_list.append(tracker['number'])
+        return {'os_label': os_list, 'visits_data': visits_list}
+
+    def get_top_countries(self, start_date, end_date):
+        trackers = self.trackers \
+            .filter(timestamp__gte=start_date, timestamp__lte=end_date) \
+            .exclude(country='') \
+            .values('country') \
+            .annotate(trackers=Count('id')) \
+            .order_by()
+
+        countries_count = []
+        for track in trackers:
+            countries_count.append(
+                [countries.alpha3(track['country']), track['trackers']])
+
+        return countries_count
+
+    def get_top_referrers(self, start_date, end_date):
+        referrers = self.trackers.exclude(referrer_url='') \
+                        .filter(timestamp__gte=start_date, timestamp__lte=end_date) \
+                        .exclude(referrer_url__contains=self.website_url) \
+                        .values('referrer_url') \
+                        .annotate(visits=Count('referrer_url')) \
+                        .order_by('-visits')[:10]
+
+        return referrers
+
+    def get_hourly_visits(self, start_date, end_date):
+        current_results = self.trackers \
+            .filter(timestamp__gte=start_date, timestamp__lte=end_date) \
+            .exclude(type_device=Tracker.BOT) \
+            .exclude(referrer_url__contains=self.website_url) \
+            .annotate(month=TruncHour('timestamp')) \
+            .values('month') \
+            .annotate(requests=Count('pk')).order_by('-month')
+
+        for item in current_results:
+            item['t'] = '{date}' \
+                .format(date=item.pop('month'))
+            item['y'] = item.pop('requests')
+
+        return list(current_results)
+
+    def get_daily_visits(self, start_date, end_date):
+        current_results = self.trackers \
+            .filter(timestamp__gte=start_date, timestamp__lte=end_date) \
+            .exclude(type_device=Tracker.BOT) \
+            .exclude(referrer_url__contains=self.website_url)\
+            .annotate(month=TruncDay('timestamp')) \
+            .values('month') \
+            .annotate(requests=Count('pk')).order_by('-month')
+
+        for item in current_results:
+            item['t'] = '{date}' \
+                .format(date=item.pop('month'))
+            item['y'] = item.pop('requests')
+
+        return list(current_results)
+
+    def get_uniques(self, start_date, end_date):
+        current_results = self.trackers \
+            .filter(timestamp__gte=start_date, timestamp__lte=end_date) \
+            .exclude(type_device=Tracker.BOT) \
+            .exclude(referrer_url__contains=self.website_url) \
+            .count()
+        return int(current_results)
+
+    def get_page_views(self, start_date, end_date):
+        current_results = self.trackers \
+            .filter(timestamp__gte=start_date, timestamp__lte=end_date) \
+            .exclude(type_device=Tracker.BOT) \
+            .count()
+        return int(current_results)
+
+    def get_stats_dates(self, start_date, end_date):
+        uniques = self.get_uniques(start_date, end_date)
+        page_views = self.get_page_views(start_date, end_date)
+        top_referrers = self.get_top_referrers(start_date, end_date)
+        top_referrer = top_referrers[0] if len(top_referrers) else None
+        time_uniques = self.get_daily_visits(start_date, end_date)
+        devices = self.get_top_devices(start_date, end_date)
+        operating_systems = self.get_top_os(start_date, end_date)
+        popular_pages = self.get_top_pages(start_date, end_date)
+        countries = self.get_top_countries(start_date, end_date)
+
+        data = dict(
+            uniques=uniques,
+            page_views=page_views,
+            top_referrers=top_referrers,
+            top_referrer=top_referrer,
+            time_uniques=time_uniques,
+            devices=devices,
+            operating_systems=operating_systems,
+            popular_pages=popular_pages,
+            countries=countries
+        )
+        return data
 
     def __str__(self):
-        return "Website: <{}>".format(self.website_url)
+        if self.website_name:
+            return self.website_name
+        return self.website_url
 
 
 class Tracker(models.Model):

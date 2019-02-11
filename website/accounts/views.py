@@ -11,7 +11,7 @@ from django.utils.timezone import now
 from django.views import View
 from django.views.generic import DetailView, CreateView
 from django.contrib.auth import login as auth_login, login
-from accounts.forms import SignUpForm
+from accounts.forms import SignUpForm, WebsiteCreationForm, DemoForm
 from accounts.tokens import account_activation_token
 from logs.models import AccountTypeSelected
 from tracker.models import Website
@@ -73,12 +73,60 @@ class DashboardView(LoginRequiredMixin, View):
     login_url = '/login'
 
     def get(self, request):
-        return render(request, 'accounts/bar-charts.html')
+        ctx = {}
+        websites = request.user.websites.all()
+        ctx.update({'websites': websites})
+        return render(request, 'privalytics/dashboard.html', ctx)
 
-class WebsiteDetails(DetailView):
+
+class CreateWebsite(LoginRequiredMixin, CreateView):
     model = Website
-    template_name = 'accounts/bar-charts.html'
+    form_class = WebsiteCreationForm
+    template_name = 'privalytics/new_website.html'
+    success_url = reverse_lazy('account')
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            website = form.save(commit=False)
+            website.owner = request.user
+            website.save()
+            return redirect('account')
+        return render(request, self.template_name, {'form': form})
+
+
+class WebsiteStats(LoginRequiredMixin, DetailView):
+    model = Website
+    template_name = 'privalytics/website_stats.html'
     context_object_name = 'website'
 
-    def get_object(self):
+    def get_object(self, queryset=None):
         return get_object_or_404(Website, website_url=self.kwargs.get('website_url'))
+
+    def get_context_data(self, **kwargs):
+        context = super(WebsiteStats, self).get_context_data(**kwargs)
+        context['form'] = DemoForm()
+        return context
+
+
+class WebsiteDates(LoginRequiredMixin, View):
+    template_name = 'privalytics/website_dates.html'
+    def get(self, request, *args, **kwargs):
+        ctx = {}
+        website = get_object_or_404(Website, website_url=kwargs['website_url'])
+        ctx.update({'website': website})
+        form = DemoForm(request.GET)
+        ctx.update({'form': form})
+        if form.is_valid():
+            print(form.cleaned_data['date_range'])
+            start_date = form.cleaned_data['date_range'][0]
+            end_date = form.cleaned_data['date_range'][1]
+            data = website.get_stats_dates(start_date, end_date)
+            ctx.update({'data': data})
+            return render(request, self.template_name, ctx)
+        return render(request, self.template_name, ctx)
+
+class WebsitePageDates(LoginRequiredMixin, View):
+    template_name = 'privalytics/website_dates.html'
+    def get(self, request, *args, **kwargs):
+        ctx = {}

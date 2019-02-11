@@ -1,0 +1,49 @@
+body{
+  background: #ebebeb;
+}
+
+.stats-summary-box {
+  background: white;
+  margin-top: 15px;
+  margin-bottom: 25px;
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14);
+}
+
+.stats-summary-title {
+  padding: 15px 20px;
+  background: #f9f9f9;
+  border-bottom: 1px solid #ccc;
+  box-sizing: border-box;
+  font-weight: 400;
+}
+
+.stats-summary-title h2 {
+  font-size: 20px;
+  color: #303030;
+  margin: 0px;
+  line-height: 1.1;
+
+}
+
+.stats-summary-body {
+  padding: 10px 10px 10px 15px;
+  font-size: 23px;
+}
+
+.stats-small {
+  font-size: 14px;
+  padding-left: 15px;
+  padding-bottom: 15px;
+}
+
+#stats-navbar{
+  padding-bottom: 0px;
+}
+#website-stats{
+  padding-top: 20px;
+}
+.stats-navbar {
+  background: white;
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14);
+  padding: 10px;
+}

@@ -1,0 +1,85 @@
+<script>
+    var ctx = document.getElementById("visitsdaychart");
+    var visits_day_chart = new Chart(ctx, {
+        type: 'line',
+        responsive: true,
+        data: {
+            datasets: [
+                {
+                    label: "Daily Visits",
+                    fill: false,
+                    backgroundColor: '#90aaec',
+                    borderColor: '#6c86bd',
+                    data: {{ website.visits_day|safe }}
+                }
+            ]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    time: {
+                        unit: 'day'
+                    },
+
+                }],
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: false
+                    }
+                }]
+            }
+        }
+    });
+</script>
+<script>
+    var ctx = document.getElementById("visitshourchart");
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        responsive: true,
+        data: {
+            datasets: [
+                {
+                    label: "Hourly Visits",
+                    fill: false,
+                    backgroundColor: '#90aaec',
+                    borderColor: '#6c86bd',
+                    data: {{ website.visits_hour|safe }}
+                }
+            ]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    time: {
+                        unit: 'hour'
+                    },
+
+                }],
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: false
+                    }
+                }]
+            }
+        }
+    });
+</script>
+<script>
+    device_data = {{ website.popular_devices_30_days|safe }};
+    var ctx = document.getElementById("devices-chart");
+    var myBarChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: device_data['device_label'],
+            datasets: [{
+                label: "Device distribution",
+                data: device_data['visits_data']
+            }]
+        },
+    });
+</script>
+<script>
+    var countries = {{ website.countries_30_days|safe }};
+</script>

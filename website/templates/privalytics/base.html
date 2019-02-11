@@ -15,10 +15,18 @@
     <link href="{% static 'privalytics/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"
+          integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 
+    <script src="{% static 'accounts/js/vendor/modernizr-2.8.3.min.js' %}"></script>
     <!-- Custom styles for this template -->
     <link href="{% static 'privalytics/css/scrolling-nav.css' %}" rel="stylesheet">
+    <script type="text/javascript" src="{% static 'privalytics/vendor/jquery/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'privalytics/vendor/momentjs/moment.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'privalytics/vendor/daterangepicker/daterangepicker.js' %}"></script>
+    <link rel="stylesheet" type="text/css"
+          href="{% static 'privalytics/vendor/daterangepicker/daterangepicker.css' %}"/>
+    <script type="text/javascript" src="{% static 'privalytics/vendor/jquery-easing/jquery.easing.js' %}"></script>
     {% block custom_css %}
     {% endblock %}
 </head>
@@ -32,16 +40,12 @@
 
 {% include 'privalytics/footer.html' %}
 
+<script src="{% static 'privalytics/vendor/jquery.meanmenu/jquery.meanmenu.min.js' %}"></script>
 <!-- Bootstrap core JavaScript -->
-<script src="{% static 'privalytics/vendor/jquery/jquery.min.js' %}"></script>
-<script src="{% static 'privalytics/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-
-<!-- Plugin JavaScript -->
-<script src="{% static 'privalytics/vendor/jquery-easing/jquery.easing.min.js' %}"></script>
-
+<script src="{% static 'privalytics/vendor/bootstrap/js/bootstrap.js' %}"></script>
 <!-- Custom JavaScript for this theme -->
 <script src="{% static 'privalytics/js/scrolling-nav.js' %}"></script>
-
+{% block footer_scripts %}
+{% endblock %}
 </body>
-
 </html>

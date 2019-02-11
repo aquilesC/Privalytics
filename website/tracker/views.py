@@ -2,17 +2,17 @@ import json
 import time
 from collections import Counter
 
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, DetailView
 from django.db.models.functions import TruncDate, Extract, TruncHour
 from django.db.models import Count
 
 from logs.models import TimeToStore
-from tracker.models import Tracker
+from tracker.models import Tracker, Website
 from django_countries import countries
 
 
@@ -39,60 +39,10 @@ class NewTrackView(View):
         return JsonResponse({'message': 'OK'}, status=200)
 
 
-class StatsView(View):
-    template_name = 'privalytics/dashboard.html'
+class WebsiteDetails(DetailView):
+    model = Website
+    template_name = 'accounts/bar-charts.html'
+    context_object_name = 'website'
 
-    def get(self, request, *args, **kwargs):
-        extra_context = {}
-        countries_count = []
-
-        queryset = Tracker.objects.all()
-
-        trackers = queryset.values('country').annotate(
-            trackers=Count('id')).order_by()
-
-        for track in trackers:
-            countries_count.append(
-                [countries.alpha3(track['country']), track['trackers']])
-
-        extra_context['countries_count'] = json.dumps(countries_count)
-
-        current_results = queryset\
-            .annotate(hour=TruncHour('timestamp'))\
-            .values('hour')\
-            .annotate(requests=Count('pk')).order_by('hour')
-
-        # current_results = queryset\
-        #     .annotate(date=TruncDate('timestamp'))\
-        #     .values('date')\
-        #     .annotate(requests=Count('pk', 'date'))
-
-        for item in current_results:
-            item['t'] = '{date}'\
-                .format(date=item.pop('hour'))
-            item['y'] = item.pop('requests')
-
-        print(current_results)
-        extra_context['requests'] = json.dumps(list(current_results))
-
-        devices_count = list(
-            queryset \
-                .exclude(type_device__exact=Tracker.UNKNOWN)\
-                .exclude(type_device__exact=Tracker.BOT) \
-                .values('type_device') \
-                .annotate(count=Count('type_device')) \
-                .order_by('-count'))[:10]
-
-        for dev in devices_count:
-            dev['type_device'] = Tracker.DEVICE_CHOICES[dev['type_device'] - 1][1]
-
-        extra_context['devices_count'] = json.dumps(devices_count)
-
-        top_pages = Tracker.objects.all().values('page').annotate(total=Count('page')).order_by('-total')[:10]
-        extra_context['top_pages'] = top_pages
-
-        return render(request, self.template_name, extra_context)
-
-
-class BaseChart(StatsView):
-    template_name = 'privalytics/base_charts.html'
+    def get_object(self, *args, **kwargs):
+        return get_object_or_404(Website, website_url=self.kwargs.get('website_url'))

@@ -1,0 +1,65 @@
+<script>
+    var ctx = document.getElementById("visitsdaychart");
+    var visits_day_chart = new Chart(ctx, {
+        type: 'line',
+        responsive: true,
+        data: {
+            datasets: [
+                {
+                    label: "Daily Visits",
+                    fill: false,
+                    backgroundColor: '#90aaec',
+                    borderColor: '#6c86bd',
+                    data: {{ data.time_uniques|safe }}
+                }
+            ]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    time: {
+                        unit: 'day'
+                    },
+
+                }],
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: false
+                    }
+                }]
+            }
+        }
+    });
+</script>
+<script>
+    device_data = {{ data.devices|safe }};
+    var ctx = document.getElementById("devices-chart");
+    var myBarChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: device_data['device_label'],
+            datasets: [{
+                label: "Devices",
+                data: device_data['visits_data']
+            }]
+        },
+    });
+</script>
+<script>
+    device_data = {{ data.operating_systems|safe }};
+    var ctx = document.getElementById("os-chart");
+    var myBarChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: device_data['os_label'],
+            datasets: [{
+                label: "OS",
+                data: device_data['visits_data']
+            }]
+        },
+    });
+</script>
+<script>
+    var countries = {{ data.countries|safe }};
+</script>

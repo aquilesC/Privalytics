@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'django_user_agents',
     'corsheaders',
     'widget_tweaks',
+    'bootstrap_daterangepicker',
 ]
 
 MIDDLEWARE = [
