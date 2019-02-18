@@ -312,7 +312,7 @@ class Tracker(models.Model):
         else:
             type_device = cls.UNKNOWN
 
-        parsed_url = urlparse(data['url'])
+        parsed_url = urlparse(data['url']['href'])
         queries = QueryDict(parsed_url.query, mutable=False)
 
         url = parsed_url.hostname

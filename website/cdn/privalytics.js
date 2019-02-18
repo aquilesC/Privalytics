@@ -1,6 +1,4 @@
 var privalytics = function (privalytics_id) {
-    'use strict';
-
     if (!window) return;
     var url = window.location;
     var document = window.document;

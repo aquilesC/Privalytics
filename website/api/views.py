@@ -1,8 +1,7 @@
+import json
 import time
 
-from django.contrib.auth.models import User
 from rest_framework.response import Response
-from rest_framework.utils import json
 from rest_framework.views import APIView
 
 from accounts.models import Profile
@@ -17,7 +16,7 @@ class TrackerView(APIView):
         data = json.loads(request.body)
         account_id = data.get('account_id')
 
-        if not Profile.objects.get(account_id=account_id).exists():
+        if not Profile.objects.filter(account_id=account_id).exists():
             return Response({'message': 'wrong account id'}, status=403)
 
         track = Tracker.create_from_json(request, data)

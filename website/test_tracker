@@ -1,0 +1,1 @@
+curl -X POST http://localhost:8000/api/tracker -H "Content-Type: application/json" -d '{"url":{"href":"https://www.pythonforthelab.com/","origin":"https://www.pythonforthelab.com","protocol":"https:","host":"www.pythonforthelab.com","hostname":"www.pythonforthelab.com","port":"","pathname":"/","search":"","hash":""},"width":1553,"height":499,"dnt":true,"account_id":"PL-A3ECD8"}'
