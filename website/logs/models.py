@@ -21,9 +21,11 @@ class TimeToStore(models.Model):
     """
     POST_TRACK = 1
     MAKE_DASHBOARD = 2
+    MAKE_WEBSITE_STATS = 3
     MEASURED = (
         (POST_TRACK, 'post_time'),
         (MAKE_DASHBOARD, 'make_dashboard'),
+        (MAKE_WEBSITE_STATS, 'make_website_stats')
     )
     timestamp = models.DateTimeField(auto_now_add=True)
     measured_time = models.FloatField()
@@ -31,4 +33,4 @@ class TimeToStore(models.Model):
 
 
     def __str__(self):
-        return "Time: {:2.3f}ms".format(1000*self.measured_time)
+        return "{} - Time: {:2.3f}ms".format(self.measured_type, 1000*self.measured_time)

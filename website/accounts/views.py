@@ -123,7 +123,9 @@ class WebsiteStats(LoginRequiredMixin, DetailView):
 
 class WebsiteDates(LoginRequiredMixin, View):
     template_name = 'privalytics/website_dates.html'
+
     def get(self, request, *args, **kwargs):
+        t0 = time.time()
         ctx = {}
         website = get_object_or_404(Website, website_url=kwargs['website_url'])
         ctx.update({'website': website})
@@ -135,7 +137,10 @@ class WebsiteDates(LoginRequiredMixin, View):
             end_date = form.cleaned_data['date_range'][1]
             data = website.get_stats_dates(start_date, end_date)
             ctx.update({'data': data})
-            return render(request, self.template_name, ctx)
+            result = render(request, self.template_name, ctx)
+            t1 = time.time()
+            TimeToStore.objects.create(measured_time=t1-t0, measured_type=TimeToStore.MAKE_WEBSITE_STATS)
+            return result
         return render(request, self.template_name, ctx)
 
 
