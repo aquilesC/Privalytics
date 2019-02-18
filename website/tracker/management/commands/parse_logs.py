@@ -120,7 +120,8 @@ class Command(BaseCommand):
         first_timestamp = None
         if not created:
             first_tracker = website.trackers.order_by('timestamp').first()
-            first_timestamp = first_tracker.timestamp
+            if first_tracker:
+                first_timestamp = first_tracker.timestamp
 
         with open(filename, 'r') as file:
             i = 0
