@@ -1,3 +1,5 @@
+import time
+
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import User
@@ -15,7 +17,7 @@ from django.views.generic import DetailView, CreateView
 from django.contrib.auth import login as auth_login, login
 from accounts.forms import SignUpForm, WebsiteCreationForm, DemoForm
 from accounts.tokens import account_activation_token
-from logs.models import AccountTypeSelected
+from logs.models import AccountTypeSelected, TimeToStore
 from tracker.models import Website
 
 
@@ -75,11 +77,15 @@ class DashboardView(LoginRequiredMixin, View):
     login_url = '/login'
 
     def get(self, request):
+        t0 = time.time()
         ctx = {}
         websites = request.user.websites.all()
         account_id = request.user.profile.account_id
         ctx.update({'websites': websites, 'account_id': account_id})
-        return render(request, 'privalytics/dashboard.html', ctx)
+        result = render(request, 'privalytics/dashboard.html', ctx)
+        t1 = time.time()
+        TimeToStore.objects.create(measured_time=t1-t0, measured_type=TimeToStore.MAKE_DASHBOARD)
+        return result
 
 
 class CreateWebsite(LoginRequiredMixin, CreateView):

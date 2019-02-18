@@ -48,7 +48,7 @@ class Website(models.Model):
         """ Gets the number of visits in the last 24 hours
         """
         return self.get_uniques(now() - timedelta(days=1), now())
-    
+
     @property
     def monthly_page_views(self):
         """ Calculate number of visits in the last month.
