@@ -21,3 +21,4 @@ var privalytics = function (privalytics_id) {
     request.setRequestHeader('Content-Type', 'text/plain; charset=UTF-8');
     request.send(JSON.stringify(data));
 };
+privalytics(privalytics_id);
