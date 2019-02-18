@@ -38,6 +38,18 @@ class Website(models.Model):
         return self.get_uniques(now() - timedelta(days=30), now())
 
     @property
+    def weekly_visits(self):
+        """ Calculates the number of visits in the last week.
+        """
+        return self.get_uniques(now() - timedelta(days=7), now())
+
+    @property
+    def daily_visits(self):
+        """ Gets the number of visits in the last 24 hours
+        """
+        return self.get_uniques(now() - timedelta(days=1), now())
+    
+    @property
     def monthly_page_views(self):
         """ Calculate number of visits in the last month.
         """

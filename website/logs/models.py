@@ -15,6 +15,7 @@ class AccountTypeSelected(models.Model):
     def __str__(self):
         return "Account {}".format(self.account_type)
 
+
 class TimeToStore(models.Model):
     """Measures the time it takes for the view to store a tracker event.
     """
