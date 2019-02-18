@@ -1,7 +1,9 @@
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
@@ -75,7 +77,8 @@ class DashboardView(LoginRequiredMixin, View):
     def get(self, request):
         ctx = {}
         websites = request.user.websites.all()
-        ctx.update({'websites': websites})
+        account_id = request.user.profile.account_id
+        ctx.update({'websites': websites, 'account_id': account_id})
         return render(request, 'privalytics/dashboard.html', ctx)
 
 
@@ -101,7 +104,10 @@ class WebsiteStats(LoginRequiredMixin, DetailView):
     context_object_name = 'website'
 
     def get_object(self, queryset=None):
-        return get_object_or_404(Website, website_url=self.kwargs.get('website_url'))
+        website = get_object_or_404(Website, website_url=self.kwargs.get('website_url'))
+        if self.request.user.has_perm('can_view_website', website):
+            return website
+        raise PermissionDenied("You do not have permission to Enter Clients in Other Company, Be Careful")
 
     def get_context_data(self, **kwargs):
         context = super(WebsiteStats, self).get_context_data(**kwargs)
@@ -125,6 +131,7 @@ class WebsiteDates(LoginRequiredMixin, View):
             ctx.update({'data': data})
             return render(request, self.template_name, ctx)
         return render(request, self.template_name, ctx)
+
 
 class WebsitePageDates(LoginRequiredMixin, View):
     template_name = 'privalytics/website_dates.html'

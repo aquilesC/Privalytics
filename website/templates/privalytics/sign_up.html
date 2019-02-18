@@ -24,3 +24,14 @@
         </div>
     </div>
 {% endblock %}
+
+{% block navbar %}
+    <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'login' %}">Login</a>
+        </li>
+    <li class="nav-item">
+            <a class="nav-link" href="{% url 'signup' %}">Sign up</a>
+        </li>
+    </ul>
+{% endblock %}

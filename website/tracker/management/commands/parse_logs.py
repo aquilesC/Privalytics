@@ -115,6 +115,13 @@ class Command(BaseCommand):
             r"""(?P<ipaddress>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) - - \[(?P<dateandtime>\d{2}\/[a-z]{3}\/\d{4}:\d{2}:\d{2}:\d{2} (\+|\-)\d{4})\] ((\"(GET|POST) )(?P<url>.+)(http\/1\.1")) (?P<statuscode>\d{3}) (?P<bytessent>\d+) (["](?P<referrer>(\-)|(.+))["]) (["](?P<useragent>.+)["])""",
             re.IGNORECASE)
 
+        website, created = Website.objects.get_or_create(website_url=options.get('base'))
+
+        first_timestamp = None
+        if not created:
+            first_tracker = website.trackers.order_by('timestamp').first()
+            first_timestamp = first_tracker.timestamp
+
         with open(filename, 'r') as file:
             i = 0
             for line in file:
@@ -126,6 +133,10 @@ class Command(BaseCommand):
                         url = datadict.get('url').strip()
                         if url.endswith('/') or url.endswith('.htm') or url.endswith('.html'):
                             datadict.update({'base_url': options.get('base', '')})
+                            curr_date = datetime.strptime(datadict['dateandtime'], '%d/%b/%Y:%H:%M:%S %z')
+                            if first_timestamp:
+                                if curr_date>first_timestamp:
+                                    break
                             tracker = self.create_from_logs(datadict)
                             if tracker:
                                 tracker.save()

@@ -8,10 +8,10 @@
           href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/css/tempusdominus-bootstrap-4.min.css"
           integrity="sha256-XPTBwC3SBoWHSmKasAk01c08M6sIA5gF5+sRxqak2Qs=" crossorigin="anonymous"/>
 
-
 {% endblock %}
+
 {% block content %}
-    {% include 'privalytics/stats_navbar.html' %}
+   {% include 'privalytics/stats_navbar.html' %}
     <section id="website-stats">
         <div class="container">
             <div class="stats-summary">
@@ -41,7 +41,11 @@
                         <div class="col-lg-3">
                             <div class="stats-summary-box">
                                 <div class="stats-summary-title"><h2>Top Page</h2></div>
-                                <div class="stats-summary-body">{{ website.popular_pages_30_days.1.page|truncatechars:20 }}</div>
+                                <div class="stats-summary-body">
+                                    <div class="toppage">{{ website.popular_pages_30_days.1.page|truncatechars:20 }}
+                                        <span class="tooltiptext">{{ website.popular_pages_30_days.1.page }}</span>
+                                    </div>
+                                </div>
                                 <div class="stats-small">Visits: {{ website.popular_pages_30_days.1.visits }}</div>
                             </div>
                         </div>
@@ -145,7 +149,6 @@
                 </div>
             </div>
         </div>
-        </div>
         <!-- Charts End-->
     </section>
 {% endblock %}
@@ -161,5 +164,6 @@
     <script src="{% static 'accounts/js/data-map/topojson.js' %}"></script>
     <script src="{% static 'accounts/js/data-map/datamaps.all.min.js' %}"></script>
     {% include 'privalytics/stats_scripts.html' %}
+
     <script src="{% static 'accounts/js/world_map.js' %}"></script>
 {% endblock %}

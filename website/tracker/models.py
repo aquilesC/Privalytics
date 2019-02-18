@@ -6,11 +6,14 @@ from django.db import models
 from django.contrib.gis.geoip2 import GeoIP2, GeoIP2Exception
 from django.db.models import Count
 from django.db.models.functions import TruncHour, TruncDay, TruncMonth
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.http import QueryDict
 
 from urllib.parse import urlparse
 
 from django.utils.timezone import now
+from guardian.shortcuts import assign_perm
 from ipware.ip import get_real_ip
 from django_countries.fields import CountryField
 from django_user_agents.utils import get_user_agent
@@ -21,6 +24,12 @@ class Website(models.Model):
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='websites')
     website_url = models.CharField(unique=True, max_length=255, blank=False, null=False, help_text='The url of your website')
     website_name = models.CharField(max_length=255, default='', blank=True, help_text='The name of your website')
+
+    class Meta:
+        permissions = (
+            ("add_new_website", "Can create new websites"),
+            ("can_view_website", "Can view the statistics"),
+        )
 
     @property
     def monthly_unique(self):
@@ -70,8 +79,10 @@ class Website(models.Model):
 
     @property
     def top_referrer_week(self):
-        return self.get_top_referrers(now()-timedelta(days=7), now())[0]
-
+        try:
+            return self.get_top_referrers(now()-timedelta(days=7), now())[0]
+        except:
+            return None
 
     def get_top_pages(self, start_date, end_date):
         pages = self.trackers \
@@ -340,3 +351,9 @@ class Tracker(models.Model):
 
     def __str__(self):
         return "Tracker {} on page {}{}".format(self.get_type_device_display(), self.url, self.page)
+
+
+@receiver(post_save, sender=Website)
+def give_user_permission(sender, instance, created, **kwargs):
+    if created:
+        assign_perm('can_view_website', instance.owner, instance)

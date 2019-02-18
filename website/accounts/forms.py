@@ -50,7 +50,7 @@ class WebsiteCreationForm(MyModelForm):
 
 class DemoForm(forms.Form):
     # Date Picker Fields
-    date_range = fields.DateRangeField(
+        date_range = fields.DateRangeField(
         input_formats=['%d/%m/%Y'],
         widget=widgets.DateRangeWidget(
             format='%d/%m/%Y'

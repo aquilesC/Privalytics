@@ -96,8 +96,19 @@
         table.table td .add {
             display: none;
         }
+
+        .code-snippet {
+            align-items: center;
+        }
+
+        {#.code-snippet pre {#}
+        {#    align-items: center;#}
+        {#    background-color: #9F9F9F;#}
+        {#    margin-left: auto;#}
+        #}#}
     </style>
 {% endblock %}
+
 {% block content %}
     <section id="websites">
         <div class="container">
@@ -129,6 +140,17 @@
                         </tr>
                     {% endfor %}
                 </table>
+            </div>
+            <div class="d-flex justify-content-center">
+                <h5>Include the following code on the websites you would like to track:</h5>
+            </div>
+            <div class="d-flex justify-content-center">
+                <div class="col-md-7">
+                    <code>
+                        &lt;script async src="https://cdn.privalytics.io/privalytics.js"&gt;&lt;/script&gt;<br/>
+                        &lt;script&gt;privalytics({{ account_id }})&lt;/script&gt;
+                    </code>
+                </div>
             </div>
         </div>
     </section>
