@@ -3,7 +3,7 @@ import time
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, NON_FIELD_ERRORS
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
@@ -46,7 +46,7 @@ class SignUpView(View):
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode('utf-8'),
                 'token': account_activation_token.make_token(user),
             })
-            user.email_user(subject, message)
+            user.email_user(subject, message, from_email='noreply@privalytics.io')
             return redirect('index')
         return render(request, self.template_name, {'form': form})
 
@@ -94,6 +94,10 @@ class CreateWebsite(LoginRequiredMixin, CreateView):
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
+            total_websites = request.user.websites.count()
+            if total_websites >= request.user.profile.max_websites:
+                form.errors[NON_FIELD_ERRORS] = ['You can\'t register more websites']
+                return render(request, self.template_name, {'form': form})
             website = form.save(commit=False)
             website.owner = request.user
             website.save()
