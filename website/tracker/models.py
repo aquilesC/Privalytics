@@ -337,7 +337,6 @@ class Tracker(models.Model):
         if Website.objects.filter(website_url=website_url).exists():
             website = Website.objects.get(website_url=website_url)
 
-
         referrer_url = None
         referrer_page = None
         if data.get('referrer'):
@@ -360,7 +359,7 @@ class Tracker(models.Model):
             page=page or '',
             utm_source=utm_source,
 
-            website = website,
+            website=website,
 
             screen_width=int(data.get('width', 0)),
             screen_height=int(data.get('height', 0)),

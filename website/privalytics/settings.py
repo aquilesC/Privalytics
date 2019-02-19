@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'logs.apps.LogsConfig',
     'accounts.apps.AccountsConfig',
+    'backend.apps.BackendConfig',
     'django_user_agents',
     'corsheaders',
     'widget_tweaks',

@@ -19,6 +19,11 @@ from django_countries import countries
 class Index(TemplateView):
     template_name = 'privalytics/index.html'
 
+class NoPersonalInformation(TemplateView):
+    template_name = 'privalytics/no_private_information.html'
+
+class PrivacyView(TemplateView):
+    template_name = 'privalytics/privacy.html'
 
 class NewTrackView(View):
     """ This view is responsible for adding the new track event into the database
