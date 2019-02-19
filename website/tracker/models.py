@@ -24,6 +24,7 @@ class Website(models.Model):
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='websites')
     website_url = models.CharField(unique=True, max_length=255, blank=False, null=False, help_text='The url of your website')
     website_name = models.CharField(max_length=255, default='', blank=True, help_text='The name of your website')
+    is_public = models.BooleanField(default=False)
 
     class Meta:
         permissions = (

@@ -1,0 +1,27 @@
+<section id="stats-bread-crumbs">
+    <div class="container">
+        <div class="stats-navbar">
+            <a href="{% url 'account' %}">Account </a> / <a href="{% url 'website-stats' website.website_url %}">{{ website }}</a>
+        </div>
+    </div>
+</section>
+<section id="stats-navbar">
+    <div class="container">
+        <div class="stats-navbar">
+            <div class="container-fluid">
+                <form method="get" action="{% url 'website-dates' website.website_url %}">
+                    <div class="row">
+                    <div class="col-sm-3">
+                        {{ form.date_range }}
+                    </div>
+                    <div class="col-sm-1">
+                        <button class="btn btn-info add-new" type="submit">Go
+                        </button>
+                    </div>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+</section>
