@@ -41,14 +41,13 @@ class SignUpView(View):
             user = form.save()
             auth_login(request, user)
             current_site = get_current_site(request)
-            subject = 'Activate Your MySite Account'
+            subject = 'Activate Your Privalytics Account'
             message = render_to_string('emails/account_activation.txt', {
                 'user': user,
                 'domain': current_site.domain,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode('utf-8'),
                 'token': account_activation_token.make_token(user),
             })
-
             user.email_user(subject, message)
             return redirect('index')
         return render(request, self.template_name, {'form': form})
@@ -68,7 +67,7 @@ class ActivateView(View):
             user.profile.email_validated_date = now()
             user.save()
             login(self.request, user)
-            return redirect('index')
+            return redirect('account')
         else:
             return render(self.request, 'privalytics/activation_failed.html')
 

@@ -8,10 +8,20 @@ import uuid
 class Profile(models.Model):
     """ Class to extend the user model. It will be useful at some point.
     """
+    BEGINNER = 0
+    BLOGGER = 1
+    ADVANCED = 2
+    ACCOUNT_TYPES = (
+        (BEGINNER, 'beginner'),
+        (BLOGGER, 'blogger'),
+        (ADVANCED, 'advanced')
+    )
+
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
     email_validated = models.BooleanField(default=False)
     email_validated_date = models.DateTimeField(auto_now_add=False, null=True)
     account_id = models.CharField(max_length=12, unique=True)
+    account_type = models.IntegerField(choices=ACCOUNT_TYPES, default=BEGINNER, null=False, blank=False)
 
     def __str__(self):
         return "Profile(email={})".format(self.user.email)
