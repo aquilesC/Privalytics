@@ -8,3 +8,12 @@ class Message(models.Model):
 
     def __str__(self):
         return "Message from {}".format(self.user_email)
+
+
+class AccountTypes(models.Model):
+    name = models.CharField(max_length=50, null=False, blank=False)
+    max_websites = models.IntegerField(default=0, null=False, blank=False)
+    max_visits = models.IntegerField(default=0, null=False, blank=False)
+
+    def __str__(self):
+        return "Account Type {}".format(self.name)

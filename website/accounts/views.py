@@ -1,11 +1,9 @@
 import time
 
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
@@ -14,7 +12,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.timezone import now
 from django.views import View
 from django.views.generic import DetailView, CreateView
-from django.contrib.auth import login as auth_login, login
+from django.contrib.auth import login as auth_login
 from accounts.forms import SignUpForm, WebsiteCreationForm, DemoForm
 from accounts.tokens import account_activation_token
 from logs.models import AccountTypeSelected, TimeToStore
@@ -39,7 +37,7 @@ class SignUpView(View):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-            auth_login(request, user)
+            auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             current_site = get_current_site(request)
             subject = 'Activate Your Privalytics Account'
             message = render_to_string('emails/account_activation.txt', {
@@ -66,7 +64,7 @@ class ActivateView(View):
             user.profile.email_validated = True
             user.profile.email_validated_date = now()
             user.save()
-            login(self.request, user)
+            auth_login(self.request, user, backend='django.contrib.auth.backends.ModelBackend')
             return redirect('account')
         else:
             return render(self.request, 'privalytics/activation_failed.html')
@@ -141,9 +139,3 @@ class WebsiteDates(LoginRequiredMixin, View):
             TimeToStore.objects.create(measured_time=t1-t0, measured_type=TimeToStore.MAKE_WEBSITE_STATS)
             return result
         return render(request, self.template_name, ctx)
-
-
-class WebsitePageDates(LoginRequiredMixin, View):
-    template_name = 'privalytics/website_dates.html'
-    def get(self, request, *args, **kwargs):
-        ctx = {}
