@@ -114,7 +114,7 @@ class WebsiteStats(LoginRequiredMixin, DetailView):
         website = get_object_or_404(Website, website_url=self.kwargs.get('website_url'))
         if self.request.user.has_perm('can_view_website', website):
             return website
-        raise PermissionDenied("You do not have permission to Enter Clients in Other Company, Be Careful")
+        raise PermissionDenied("You do not have permission to view this website")
 
     def get_context_data(self, **kwargs):
         context = super(WebsiteStats, self).get_context_data(**kwargs)
@@ -129,6 +129,48 @@ class WebsiteDates(LoginRequiredMixin, View):
         t0 = time.time()
         ctx = {}
         website = get_object_or_404(Website, website_url=kwargs['website_url'])
+        ctx.update({'website': website})
+        form = DemoForm(request.GET)
+        ctx.update({'form': form})
+        if form.is_valid():
+            print(form.cleaned_data['date_range'])
+            start_date = form.cleaned_data['date_range'][0]
+            end_date = form.cleaned_data['date_range'][1]
+            data = website.get_stats_dates(start_date, end_date)
+            ctx.update({'data': data})
+            result = render(request, self.template_name, ctx)
+            t1 = time.time()
+            TimeToStore.objects.create(measured_time=t1-t0, measured_type=TimeToStore.MAKE_WEBSITE_STATS)
+            return result
+        return render(request, self.template_name, ctx)
+
+
+class PublicWebsiteView(DetailView):
+    model = Website
+    template_name = 'privalytics/website_public_stats.html'
+    context_object_name = 'website'
+
+    def get_object(self, queryset=None):
+        website = get_object_or_404(Website, website_url=self.kwargs.get('website_url'))
+        if website.is_public:
+            return website
+        raise PermissionDenied("This website stats are not public")
+
+    def get_context_data(self, **kwargs):
+        context = super(PublicWebsiteView, self).get_context_data(**kwargs)
+        context['form'] = DemoForm()
+        return context
+
+
+class PublicWebsiteDates(LoginRequiredMixin, View):
+    template_name = 'privalytics/website_public_dates.html'
+
+    def get(self, request, *args, **kwargs):
+        t0 = time.time()
+        ctx = {}
+        website = get_object_or_404(Website, website_url=kwargs['website_url'])
+        if not website.is_public:
+            return redirect('index')
         ctx.update({'website': website})
         form = DemoForm(request.GET)
         ctx.update({'form': form})

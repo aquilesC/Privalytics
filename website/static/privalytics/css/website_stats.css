@@ -36,6 +36,7 @@ body{
   padding-bottom: 15px;
 }
 #stats-bread-crumbs{
+  margin-top: 30px;
   padding-bottom: 20px;
 }
 
@@ -46,6 +47,8 @@ body{
 #website-stats{
   padding-top: 20px;
 }
+
+
 .stats-navbar {
   background: white;
   box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14);
