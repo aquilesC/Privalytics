@@ -46,8 +46,8 @@ class SignUpView(View):
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode('utf-8'),
                 'token': account_activation_token.make_token(user),
             })
-            user.email_user(subject, message, from_email='noreply@privalytics.io')
-            return redirect('index')
+            user.email_user(subject, message, from_email='Privalytics <noreply@privalytics.io>')
+            return redirect('account')
         return render(request, self.template_name, {'form': form})
 
 
