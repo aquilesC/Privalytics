@@ -1,0 +1,52 @@
+{% extends 'privalytics/base.html' %}
+{% load static %}
+{% block custom_css %}
+    <link href="{% static 'privalytics/css/pricing.css' %}" rel="stylesheet">
+    <link href="{% static 'privalytics/css/showcase.css' %}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+    <section class="mt-5">
+        <div class="container">
+            <div class="row justify-content-md-center">
+                <div class="col-md-8">
+                    <h1 class="mb-3">How does Privalytics work</h1>
+                    <p class="lead">We don't store Private Information</p>
+                    <p>Compared to other analytics solutions, we don't need to store personal information about your
+                        users, this makes us GDPR compliant by definition. We only store metrics about how your website
+                        is used, where the visitors come from and the type of device they use. Nothing of which can
+                        trace back to an individual user.</p>
+                    <p class="lead">We don't use cookies</p>
+                    <p>By choosing not to use cookies, you don't need to show the cookie banner to your users. Even if
+                        underrated, many users online feel more confident visiting websites which don't force them to
+                        allow cookies. The downside of not using cookies is that we can't provide precise metrics on the
+                        number of pages a single person visits, or the exact path they followed in a given session.</p>
+                    <p class="lead">We respect do not track</p>
+                    <p>Many users set the do not track option on their browsers. We take care of this by only
+                        registering the page visited, but nothing extra that belongs to the real user, such as the
+                        browser, location or referrer. We follow the guidelines of the <a
+                                href="https://www.w3.org/2011/tracking-protection/drafts/tracking-compliance.html">W3C</a>
+                        and implement extra restrictions in order to avoid any mixed feelings with your users.</p>
+                    <p class="lead">About Location Information</p>
+                    <p>We provide location information through <a
+                            href="https://www.maxmind.com">https://www.maxmind.com</a> GeoLite2 database. In order to
+                        avoid information leakage, we store the database locally and only keep the information of the
+                        country of origin. This makes it virtually impossible to trace back the identity of a user based
+                        on the location.</p>
+                    <p class="lead">About User Agent and Operating System</p>
+                    <p>There is a wealth of possible combinations of operating systems and user agents. More
+                        specifically, every browser posses a build number that changes with each update. The combination
+                        of operating system and specific browser used can be used to identify users. That is why we only
+                        store the browser brand (Firefox, Opera, etc.) and operating system (Linux, Windows, etc.). </p>
+                </div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col-md-8">
+                    <h2>Doubts or suggestions?</h2>
+                    <p class="lead">We are continuously trying to improve our product. Drop us a line to contact@privalytics.io if you would like to discuss how to implement safer mechanisms or more detailed analytics.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+

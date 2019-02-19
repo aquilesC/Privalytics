@@ -1,0 +1,21 @@
+{% extends 'privalytics/base.html' %}
+{% load static %}
+{% block custom_css %}
+    <link href="{% static 'privalytics/css/pricing.css' %}" rel="stylesheet">
+    <link href="{% static 'privalytics/css/showcase.css' %}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+    <section class="mt-5">
+        <div class="container">
+            <div class="row justify-content-md-center">
+                <div class="col-md-8">
+                    <h1 class="mb-4">Privacy Policy</h1>
+                    <p>Privalytics was built with privacy as its core value, and therefore our main asset is our ability to protect your personal information, keeping to a minimum what we collect and store.</p>
+                    <h3 class="mb-4">Data we store</h3>
+                    <p>To use our service, we ask</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

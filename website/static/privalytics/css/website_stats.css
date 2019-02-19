@@ -35,9 +35,13 @@ body{
   padding-left: 15px;
   padding-bottom: 15px;
 }
+#stats-bread-crumbs{
+  padding-bottom: 20px;
+}
 
 #stats-navbar{
-  padding-bottom: 0px;
+  padding-top: 5px;
+  padding-bottom: 0;
 }
 #website-stats{
   padding-top: 20px;

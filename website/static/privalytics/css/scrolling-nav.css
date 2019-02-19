@@ -5,8 +5,17 @@
  */
 header {
   padding: 156px 0 100px;
+  background-image: url("../img/header_bkg_1.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: bottom;
 }
 
 section {
   padding: 75px 0;
 }
+
+#our-offer{
+  padding-top: 10px;
+}
+

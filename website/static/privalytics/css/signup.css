@@ -3,9 +3,21 @@
   --input-padding-y: .75rem;
 }
 
+
+html, body {
+    margin: 0;
+    height: 100%;
+}
+
 body {
   background: #007bff;
   background: linear-gradient(to right, #0062E6, #33AEFF);
+}
+
+footer {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
 }
 
 .card-signin {
