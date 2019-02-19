@@ -272,7 +272,7 @@ class Tracker(models.Model):
     # The domain of the request (everything up to the first '/')
     url = models.URLField()
     website = models.ForeignKey(Website, on_delete=models.CASCADE, to_field='website_url',
-                                default='pythonforthelab.com', null=True, related_name='trackers')
+                                null=True, related_name='trackers')
     # The page visited (everything after the first '/')
     page = models.CharField(max_length=255, blank=True)
     # Query arguments, such as utm_source
@@ -331,6 +331,13 @@ class Tracker(models.Model):
         page = parsed_url.path
         utm_source = queries.get('utm_source')
 
+        website = None
+        website_url = url.lower()
+        website_url = website_url.replace('http://', '').replace('https://', '').replace('www.', '')
+        if Website.objects.filter(website_url=website_url).exists():
+            website = Website.objects.get(website_url=website_url)
+
+
         referrer_url = None
         referrer_page = None
         if data.get('referrer'):
@@ -352,6 +359,8 @@ class Tracker(models.Model):
             url=url or '',
             page=page or '',
             utm_source=utm_source,
+
+            website = website,
 
             screen_width=int(data.get('width', 0)),
             screen_height=int(data.get('height', 0)),
