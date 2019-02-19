@@ -126,23 +126,26 @@ class Command(BaseCommand):
         with open(filename, 'r') as file:
             i = 0
             for line in file:
-                data = re.search(lineformat, line)
-                if data:
-                    datadict = data.groupdict()
-                    status = datadict['statuscode']
-                    if status == '200':
-                        url = datadict.get('url').strip()
-                        if url.endswith('/') or url.endswith('.htm') or url.endswith('.html'):
-                            datadict.update({'base_url': options.get('base', '')})
-                            curr_date = datetime.strptime(datadict['dateandtime'], '%d/%b/%Y:%H:%M:%S %z')
-                            if first_timestamp:
-                                if curr_date>first_timestamp:
-                                    break
-                            tracker = self.create_from_logs(datadict)
-                            if tracker:
-                                tracker.save()
-                                i += 1
-                            if i % 20 == 0:
-                                print('Parsed {} requests'.format(i), end='\r')
+                try:
+                    data = re.search(lineformat, line)
+                    if data:
+                        datadict = data.groupdict()
+                        status = datadict['statuscode']
+                        if status == '200':
+                            url = datadict.get('url').strip()
+                            if url.endswith('/') or url.endswith('.htm') or url.endswith('.html'):
+                                datadict.update({'base_url': options.get('base', '')})
+                                curr_date = datetime.strptime(datadict['dateandtime'], '%d/%b/%Y:%H:%M:%S %z')
+                                if first_timestamp:
+                                    if curr_date>first_timestamp:
+                                        break
+                                tracker = self.create_from_logs(datadict)
+                                if tracker:
+                                    tracker.save()
+                                    i += 1
+                                if i % 20 == 0:
+                                    print('Parsed {} requests'.format(i), end='\r')
+                except:
+                    pass
         print('\n')
         print('Finished processing the Logs')
