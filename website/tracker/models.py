@@ -4,15 +4,16 @@ from datetime import timedelta
 from django.contrib.auth.models import User
 from django.db import models
 from django.contrib.gis.geoip2 import GeoIP2, GeoIP2Exception
-from django.db.models import Count
+from django.db.models import Count, F
 from django.db.models.functions import TruncHour, TruncDay, TruncMonth
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.http import QueryDict
+from django.core.serializers.json import DjangoJSONEncoder
 
 from urllib.parse import urlparse
 
-from django.utils.timezone import now
+from django.utils.timezone import now, datetime
 from guardian.shortcuts import assign_perm
 from ipware.ip import get_real_ip
 from django_countries.fields import CountryField
@@ -66,7 +67,7 @@ class Website(models.Model):
     def visits_day(self):
         """Calculates visits per day in the last 30 days.
         """
-        return json.dumps(self.get_daily_visits(now()-timedelta(days=30), now()))
+        return json.dumps(self.get_daily_visits(now()-timedelta(days=30), now()), cls=DjangoJSONEncoder)
 
     @property
     def visits_month(self):
@@ -193,7 +194,9 @@ class Website(models.Model):
             item['t'] = '{date}' \
                 .format(date=item.pop('month'))
             item['y'] = item.pop('requests')
-
+        #
+        # results = WebsiteViews.get_views(self, start_date.date(), end_date.date())
+        # print(results)
         return list(current_results)
 
     def get_uniques(self, start_date, end_date):
@@ -372,6 +375,65 @@ class Tracker(models.Model):
 
     def __str__(self):
         return "Tracker {} on page {}{}".format(self.get_type_device_display(), self.url, self.page)
+
+
+# class Page(models.Model):
+#     website = models.ForeignKey(Website, on_delete=models.CASCADE)
+#     url = models.CharField(max_length=255, null=False, default='/')
+#
+#
+# class WebsiteViews(models.Model):
+#     date = models.DateField(auto_now_add=False, null=False, default=now)
+#     views = models.IntegerField(default=0)
+#     website = models.ForeignKey(Website, on_delete=models.CASCADE, related_name='views')
+#
+#     class Meta:
+#         unique_together = ('website', 'date')
+#
+#     @classmethod
+#     def get_views(cls, website, start_date, end_date):
+#         """Gets the number of views for a specific website on a specific date range.
+#         """
+#         num_days = abs((end_date-start_date).days)
+#         result = cls.objects.filter(date__gte=start_date, date__lte=end_date).annotate(t=F('date'), y=F('views'))
+#         if num_days != result.count():
+#             current_results = website.trackers \
+#                 .filter(timestamp__gte=start_date, timestamp__lte=end_date) \
+#                 .exclude(type_device=Tracker.BOT) \
+#                 .annotate(day=TruncDay('timestamp')) \
+#                 .values('day') \
+#                 .annotate(requests=Count('pk')).order_by('-day')
+#
+#             for item in current_results:
+#                 item['t'] = '{date:%Y-%m-%d}' \
+#                     .format(date=item.pop('day'))
+#                 item['visits'] = item.pop('requests')
+#                 cls.objects.create(website=website, date=item['t'], views=item['visits'])
+#
+#         last_date = cls.objects.filter(website=website).order_by('-date').first().date or datetime(2000, 1, 1).date()
+#         last_date = last_date
+#
+#         if end_date > last_date:
+#             current_results = website.trackers \
+#                 .filter(timestamp__gt=last_date+timedelta(days=1), timestamp__lte=end_date+timedelta(days=1)) \
+#                 .exclude(type_device=Tracker.BOT) \
+#                 .annotate(day=TruncDay('timestamp')) \
+#                 .values('day') \
+#                 .annotate(requests=Count('pk')).order_by('-day')
+#
+#             for item in current_results:
+#                 item['t'] = '{date:%Y-%m-%d}' \
+#                     .format(date=item.pop('day'))
+#                 item['visits'] = item.pop('requests')
+#                 cls.objects.create(website=website, date=item['t'], views=item['visits'])
+#
+#         return cls.objects.filter(date__gte=start_date, date__lte=end_date).annotate(t=F('date'), y=F('views'))
+#
+#
+# class PageViews(models.Model):
+#     date = models.DateField(auto_now_add=False, null=False)
+#     views = models.IntegerField(default=0)
+#     page = models.ForeignKey(Page, on_delete=models.CASCADE)
 
 
 @receiver(post_save, sender=Website)
