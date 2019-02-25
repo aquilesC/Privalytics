@@ -96,7 +96,7 @@ class Command(BaseCommand):
                             print(location_data.get('country_code', ''))
                             print(location_data.get('region', ''))
                             tracker.country = location_data.get('country_code', '') or '',
-                            tracker.region = location_data.get('region', '') or '',
+                            # tracker.region = location_data.get('region', '') or '',
 
                         except:
                             pass
