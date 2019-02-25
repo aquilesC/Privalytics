@@ -69,10 +69,6 @@ class Command(BaseCommand):
                 operating_system = user_agent.os.family
                 device_family = user_agent.device.family
                 browser = user_agent.browser.family
-                print(user_agent)
-                print(operating_system)
-                print(device_family)
-                print(browser)
 
                 if user_agent.is_mobile:
                     type_device = Tracker.MOBILE
@@ -90,17 +86,21 @@ class Command(BaseCommand):
                 tracker.browser = browser
                 tracker.type_device = type_device
 
+                tracker.save()
+
                 if profile.can_geolocation and not user_agent.is_bot:
                     if raw_tracker.ip:
                         geo = GeoIP2()
                         try:
                             location_data = geo.city(raw_tracker.ip)
+                            print(location_data.get('country_code', ''))
+                            print(location_data.get('region', ''))
                             tracker.country = location_data.get('country_code', '') or '',
                             tracker.region = location_data.get('region', '') or '',
 
                         except:
                             pass
-                    raw_tracker.ip = None
+                    # raw_tracker.ip = None
 
                 tracker.save()
             raw_tracker.processed = True
