@@ -15,6 +15,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         raw_trackers = RawTracker.objects.filter(processed=False)
         for raw_tracker in raw_trackers:
+            print('Processing: {}'.format(raw_tracker.id))
             # Let's verify account:
             try:
                 profile = Profile.objects.get(account_id=raw_tracker.account_id)
