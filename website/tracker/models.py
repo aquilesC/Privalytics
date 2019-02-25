@@ -13,7 +13,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 from urllib.parse import urlparse
 
-from django.utils.timezone import now, datetime
+from django.utils.timezone import now
 from guardian.shortcuts import assign_perm
 from ipware.ip import get_real_ip
 from django_countries.fields import CountryField
@@ -263,7 +263,7 @@ class Tracker(models.Model):
     )
 
     timestamp = models.DateTimeField(auto_now_add=True)
-    country = CountryField()
+    country = CountryField(blank=True)
     region = models.CharField(max_length=255, blank=True)
     city = models.CharField(max_length=255, blank=True)
 
@@ -285,6 +285,8 @@ class Tracker(models.Model):
 
     screen_height = models.IntegerField(null=True)
     screen_width = models.IntegerField(null=True)
+
+    dnt = models.BooleanField(default=False)
 
     # The domain of the referrer, everything up to the first '/'
     referrer_url = models.URLField(blank=True, null=True)
