@@ -23,6 +23,7 @@ class Profile(models.Model):
     account_id = models.CharField(max_length=12, unique=True)
     account_type = models.IntegerField(choices=ACCOUNT_TYPES, default=BEGINNER, null=False, blank=False)
     max_websites = models.IntegerField(default=0, help_text='maximum number of websites that can be registerd')
+    can_geolocation = models.BooleanField(default=False, null=True)
 
     def __str__(self):
         return "Profile(email={})".format(self.user.email)

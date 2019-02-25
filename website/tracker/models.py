@@ -252,6 +252,12 @@ class RawTracker(models.Model):
     account_id = models.CharField(max_length=15)
     ip = models.GenericIPAddressField(null=True, blank=True)  # This field will be erased as soon as the tracker is processeed
     user_agent = models.CharField(max_length=255, blank=True, null=True)
+    processed = models.BooleanField(default=False)
+    screen_width = models.IntegerField(blank=True, null=True)
+    screen_height = models.IntegerField(blank=True, null=True)
+    wrong_account_id = models.BooleanField(default=False)
+    website_does_not_exist = models.BooleanField(default=False)
+    wrong_owner = models.BooleanField(default=False)
 
 
 
@@ -273,7 +279,7 @@ class Tracker(models.Model):
         (UNKNOWN, 'unknown')
     )
 
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=False)
     country = CountryField(blank=True)
     region = models.CharField(max_length=255, blank=True)
     city = models.CharField(max_length=255, blank=True)
@@ -294,8 +300,8 @@ class Tracker(models.Model):
     # TODO: Find out what arguments are important for users
     utm_source = models.CharField(max_length=255, null=True, blank=True)
 
-    screen_height = models.IntegerField(null=True)
-    screen_width = models.IntegerField(null=True)
+    screen_height = models.IntegerField(null=True, blank=True)
+    screen_width = models.IntegerField(null=True, blank=True)
 
     dnt = models.BooleanField(default=False)
 

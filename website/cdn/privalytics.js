@@ -6,8 +6,8 @@ var privalytics = function (privalytics_id) {
 
     var data = {url: url.href};
     if (document.referrer) data.referrer = document.referrer;
-    if (window.innerWidth) data.width = window.innerWidth;
-    if (window.innerHeight) data.height = window.innerHeight;
+    if (window.innerWidth) data.screen_width = window.innerWidth;
+    if (window.innerHeight) data.screen_height = window.innerHeight;
     // If do not track is enabled, we wont store any personal information on our servers
     data.dnt = ('doNotTrack' in navigator && navigator.doNotTrack === "1");
     data.account_id = privalytics_id;
