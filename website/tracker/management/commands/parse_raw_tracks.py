@@ -6,6 +6,8 @@ from urllib.parse import urlparse
 from django.http import QueryDict
 from user_agents import parse
 from django.contrib.gis.geoip2 import GeoIP2, GeoIP2Exception
+import logging
+logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
@@ -14,8 +16,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         raw_trackers = RawTracker.objects.filter(processed=False)
+        logger.info('Going to process {} raw tracks'.format(raw_trackers.count()))
         for raw_tracker in raw_trackers:
-            print('Processing: {}'.format(raw_tracker.id))
             # Let's verify account:
             try:
                 profile = Profile.objects.get(account_id=raw_tracker.account_id)
