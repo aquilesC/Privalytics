@@ -95,7 +95,7 @@ class Command(BaseCommand):
                             location_data = geo.city(raw_tracker.ip)
                             print(location_data.get('country_code', ''))
                             print(location_data.get('region', ''))
-                            tracker.country = location_data.get('country_code', '') or '',
+                            # tracker.country = location_data.get('country_code', '') or '',
                             # tracker.region = location_data.get('region', '') or '',
 
                         except:
