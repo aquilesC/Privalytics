@@ -81,6 +81,9 @@ class Command(BaseCommand):
                 else:
                     type_device = Tracker.UNKNOWN
 
+                tracker.screen_height = raw_tracker.screen_height
+                tracker.screen_width = raw_tracker.screen_width
+
                 tracker.operating_system = operating_system
                 tracker.device_family = device_family
                 tracker.browser = browser
