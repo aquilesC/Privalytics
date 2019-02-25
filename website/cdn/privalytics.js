@@ -4,7 +4,7 @@ var privalytics = function (privalytics_id) {
     var document = window.document;
     var navigator = window.navigator;
 
-    var data = {url: url};
+    var data = {url: url.href};
     if (document.referrer) data.referrer = document.referrer;
     if (window.innerWidth) data.width = window.innerWidth;
     if (window.innerHeight) data.height = window.innerHeight;
