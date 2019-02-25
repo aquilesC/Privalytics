@@ -3,6 +3,7 @@ from django.contrib.auth.views import LogoutView
 from django.urls import path, include
 from django.views.generic import TemplateView
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
@@ -13,5 +14,5 @@ urlpatterns = [
     path('terms', TemplateView.as_view(template_name='privalytics/terms.html'), name='terms'),
     path('data-collection', TemplateView.as_view(template_name='privalytics/data_collection.html'), name='data-collection'),
     path('', include('accounts.urls')),
-    path('tracker', include('tracker.urls')),
+    path('tracker/', include('tracker.urls')),
 ]
