@@ -69,6 +69,10 @@ class Command(BaseCommand):
                 operating_system = user_agent.os.family
                 device_family = user_agent.device.family
                 browser = user_agent.browser.family
+                print(user_agent)
+                print(operating_system)
+                print(device_family)
+                print(browser)
 
                 if user_agent.is_mobile:
                     type_device = Tracker.MOBILE
