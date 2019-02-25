@@ -259,6 +259,9 @@ class RawTracker(models.Model):
     website_does_not_exist = models.BooleanField(default=False)
     wrong_owner = models.BooleanField(default=False)
 
+    def __str__(self):
+        return "Raw Tracker {}".format(self.id)
+
 
 
 class Tracker(models.Model):
