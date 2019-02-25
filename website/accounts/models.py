@@ -24,6 +24,7 @@ class Profile(models.Model):
     account_type = models.IntegerField(choices=ACCOUNT_TYPES, default=BEGINNER, null=False, blank=False)
     max_websites = models.IntegerField(default=0, help_text='maximum number of websites that can be registerd')
     can_geolocation = models.BooleanField(default=False, null=True)
+    account_selected = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
         return "Profile(email={})".format(self.user.email)

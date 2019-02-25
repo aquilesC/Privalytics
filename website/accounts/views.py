@@ -31,13 +31,14 @@ class SignUpView(View):
                 AccountTypeSelected.objects.create(account_type=AccountTypeSelected.ADVANCED)
             else:
                 AccountTypeSelected.objects.create(account_type=AccountTypeSelected.OTHER)
+            request.session['account_type'] = account_type
+            print(request.session.get('account_type'))
         return render(request, self.template_name, {'form': form})
 
     def post(self, request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-            auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             current_site = get_current_site(request)
             subject = 'Activate Your Privalytics Account'
             message = render_to_string('emails/account_activation.txt', {
@@ -47,6 +48,10 @@ class SignUpView(View):
                 'token': account_activation_token.make_token(user),
             })
             user.email_user(subject, message, from_email='Privalytics <noreply@privalytics.io>')
+            user.profile.account_selected = request.session.get('account_type')
+            user.save()
+            user.profile.save()
+            auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             return redirect('account')
         return render(request, self.template_name, {'form': form})
 
