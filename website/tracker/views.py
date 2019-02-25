@@ -9,7 +9,7 @@ from tracker.models import Website
 
 class WebsiteStats(LoginRequiredMixin, DetailView):
     model = Website
-    template_name = 'stats/website_stats.html'
+    template_name = 'tracker/website_stats.html'
     context_object_name = 'website'
 
     def get_object(self, queryset=None):
