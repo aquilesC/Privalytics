@@ -244,6 +244,17 @@ class Website(models.Model):
         return self.website_url
 
 
+class RawTracker(models.Model):
+    timestamp = models.DateTimeField(auto_now_add=True)
+    url = models.URLField(blank=False, null=False)
+    referrer = models.URLField(blank=True, null=True)
+    dnt = models.BooleanField(default=False)
+    account_id = models.CharField(max_length=15)
+    ip = models.GenericIPAddressField(null=True, blank=True)  # This field will be erased as soon as the tracker is processeed
+    user_agent = models.CharField(max_length=255, blank=True, null=True)
+
+
+
 class Tracker(models.Model):
     """Each Tracker object corresponds to a different request sent to the server.
     The amount of parameters logged has to be carefully designed.

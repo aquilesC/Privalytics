@@ -9,9 +9,7 @@ var privalytics = function (privalytics_id) {
     if (window.innerWidth) data.width = window.innerWidth;
     if (window.innerHeight) data.height = window.innerHeight;
     // If do not track is enabled, we wont store any personal information on our servers
-    if ('doNotTrack' in navigator && navigator.doNotTrack === "1") {
-        data.dnt = true;
-    }
+    data.dnt = ('doNotTrack' in navigator && navigator.doNotTrack === "1");
     data.account_id = privalytics_id;
 
     var request = new XMLHttpRequest();

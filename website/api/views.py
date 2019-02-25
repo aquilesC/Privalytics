@@ -1,27 +1,25 @@
 import json
 import time
 
+from ipware.ip import get_real_ip
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from accounts.models import Profile
+from api.serializer import TrackerSerializer
 from logs.models import TimeToStore
 from tracker.models import Tracker
 
 
 class TrackerView(APIView):
-
     def post(self, request):
-        t0 = time.time()
-        data = json.loads(request.body)
-        account_id = data.get('account_id')
-
-        if not Profile.objects.filter(account_id=account_id).exists():
-            return Response({'message': 'wrong account id'}, status=403)
-
-        track = Tracker.create_from_json(request, data)
-        track.save()
-        t1 = time.time()
-        time_log = TimeToStore(measured_time=t1 - t0)
-        time_log.save()
-        return Response({'message': 'OK'}, status=200)
+        serializer = TrackerSerializer(data=request.data)
+        if serializer.is_valid():
+            raw_tracker = serializer.save()
+            if not raw_tracker.dnt:
+                raw_tracker.ip = get_real_ip(request) or ''
+                raw_tracker.user_agent = request.META['HTTP_USER_AGENT']
+                raw_tracker.save()
+            return Response({'message': 'OK'}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
