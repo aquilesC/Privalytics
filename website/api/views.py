@@ -1,6 +1,7 @@
 import time
 
 from ipware.ip import get_real_ip
+from rest_framework.permissions import AllowAny
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -10,6 +11,8 @@ from logs.models import TimeToStore
 
 
 class TrackerView(APIView):
+    permission_classes = (AllowAny, )
+
     def post(self, request):
         t0 = time.time()
         serializer = TrackerSerializer(data=request.data)
