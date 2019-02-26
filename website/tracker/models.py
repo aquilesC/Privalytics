@@ -106,6 +106,7 @@ class Website(models.Model):
         screen_width = self.trackers \
                     .filter(timestamp__gte=start_date, timestamp__lte=end_date) \
                     .exclude(type_device=Tracker.BOT)\
+                    .exclude(screen_height=0)\
                     .values('screen_width')\
                     .annotate(visits=Count('screen_width'))\
                     .order_by('-visits')[:10]
