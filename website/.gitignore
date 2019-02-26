@@ -1,3 +1,4 @@
 static_assets/
 geolite
 *.log
+node_modules/
