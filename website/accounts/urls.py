@@ -11,9 +11,5 @@ urlpatterns = [
     path('login', LoginView.as_view(template_name='privalytics/login.html'), name='login'),
     path('account', DashboardView.as_view(), name='account'),
     path('account/new-website', CreateWebsite.as_view(), name='create-website'),
-    path('account/<str:website_url>', WebsiteStats.as_view(), name='website-stats'),
-    path('account/<str:website_url>/dates', WebsiteDates.as_view(), name='website-dates'),
     path('logout', LogoutView.as_view(), name='logout'),
-    path('ws/<str:website_url>', PublicWebsiteView.as_view(), name='public-stats'),
-    path('ws/<str:website_url>/dates', PublicWebsiteDates.as_view(), name='public-website-dates'),
 ]

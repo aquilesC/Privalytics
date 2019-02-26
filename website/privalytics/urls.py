@@ -14,5 +14,5 @@ urlpatterns = [
     path('terms', TemplateView.as_view(template_name='privalytics/terms.html'), name='terms'),
     path('data-collection', TemplateView.as_view(template_name='privalytics/data_collection.html'), name='data-collection'),
     path('', include('accounts.urls')),
-    path('tracker/', include('tracker.urls')),
+    path('', include('tracker.urls')),
 ]

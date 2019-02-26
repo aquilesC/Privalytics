@@ -39,24 +39,22 @@ class WebsiteStats(View):
             ctx.update({'countries': countries})
         return ctx
 
-    def get_website(self, website_url):
-        website = get_object_or_404(Website, website_url=website_url)
-        if not website.is_public and not self.request.user.has_perm('can_view_website', website):
-            return redirect('login')
-        return website
-
     def get(self, request, website_url):
         start_date = now()-timedelta(days=30)
         end_date = now()
 
-        website = self.get_website(website_url)
+        website = get_object_or_404(Website, website_url=website_url)
+        if not website.is_public and not self.request.user.has_perm('can_view_website', website):
+            return redirect('login')
 
         ctx = self.get_context(website, start_date, end_date)
         ctx.update({'form': DateRangeForm(initial={'date_range': (start_date, end_date)})})
         return render(request, self.template_name, ctx)
 
     def post(self, request, website_url):
-        website = self.get_website(website_url)
+        website = get_object_or_404(Website, website_url=website_url)
+        if not website.is_public and not self.request.user.has_perm('can_view_website', website):
+            return redirect('login')
         form = DateRangeForm(request.POST)
         if form.is_valid():
             start_date = form.cleaned_data['date_range'][0]

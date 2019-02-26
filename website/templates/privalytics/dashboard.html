@@ -133,7 +133,7 @@
                     </thead>
                     {% for website in websites %}
                         <tr>
-                            <td><a href="{% url 'website-stats' website.website_url %}">{{ website }}</a></td>
+                            <td><a href="{% url 'website' website.website_url %}">{{ website }}</a></td>
                             <td>{{ website.monthly_unique }}</td>
                             <td>{{ website.weekly_visits }}</td>
                             <td>{{ website.daily_visits }}</td>

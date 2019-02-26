@@ -39,10 +39,12 @@
 
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
-
-        {% block content %}
-        {% endblock %}
-
+        <!-- Main Content -->
+        <div id="content">
+            {% include 'tracker/navbar.html' %}
+            {% block content %}
+            {% endblock %}
+        </div>
     </div>
     <!-- End of Page Wrapper -->
 
@@ -65,24 +67,24 @@
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
+                    <a class="btn btn-primary" href="{% url 'logout' %}">Logout</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
-    <!-- Footer -->
-    <footer class="sticky-footer bg-white">
-        <div class="container my-auto">
-            <div class="copyright text-center my-auto">
-                <span>Copyright &copy; Privalytics.io 2019</span>
-            </div>
+<!-- Footer -->
+<footer class="sticky-footer bg-white">
+    <div class="container my-auto">
+        <div class="copyright text-center my-auto">
+            <span><p class="m-0 text-left"><a href="{% url 'terms' %}">Terms & Conditions</a> | <a href="{% url 'privacy' %}">Privacy Policy</a> | <a href="{% url 'data-collection' %}">Data Collection</a> </p>
+        Copyright &copy; Privalytics 2019</span>
         </div>
-    </footer>
-    <!-- End of Footer -->
-    <!-- End of Content Wrapper -->
-    <!-- Bootstrap core JavaScript-->
-
+    </div>
+</footer>
+<!-- End of Footer -->
+<!-- End of Content Wrapper -->
+<!-- Bootstrap core JavaScript-->
 
 
 <script type="text/javascript" src="{% static 'vendor/popper/popper.min.js' %}"></script>
