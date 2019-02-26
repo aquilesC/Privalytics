@@ -29,6 +29,7 @@ countries.forEach(function (item) {
 new Datamap({
     element: document.getElementById('world-map'),
     projection: 'mercator',
+    height: 500,
     fills: {defaultFill: '#F5F5F5'},
     data: dataset,
     geographyConfig: {
@@ -47,5 +48,9 @@ new Datamap({
                 '<br>Visits: <strong>', data.requestsPerCountry, '</strong>',
                 '</div>'].join('');
         }
+    },
+    options:{
+        responsive: false
     }
 });
+

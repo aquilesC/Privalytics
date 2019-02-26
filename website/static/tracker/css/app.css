@@ -15,3 +15,7 @@
 .popular-pages:hover .tooltiptext {
   visibility: visible;
 }
+
+.sidebar-brand-icon img{
+  height: 30px;
+}

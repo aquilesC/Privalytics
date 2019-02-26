@@ -86,7 +86,7 @@
     var countries = {{ website.countries_30_days|safe }};
 </script>
 <script>
-    device_data = {{ devices|safe }}
+    device_data = {{ devices|safe }};
     var ctx = document.getElementById("devicesPieChart");
     var myPieChart = new Chart(ctx, {
   type: 'doughnut',
@@ -112,7 +112,7 @@
       caretPadding: 10,
     },
     legend: {
-      display: false
+      display: true
     },
     cutoutPercentage: 80,
   },

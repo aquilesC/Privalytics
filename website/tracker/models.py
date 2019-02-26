@@ -33,6 +33,10 @@ class Website(models.Model):
             ("can_view_website", "Can view the statistics"),
         )
 
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('website', args=[self.website_url])
+
     @property
     def monthly_unique(self):
         """ Calculate number of visits in the last month.
@@ -97,6 +101,16 @@ class Website(models.Model):
             return self.get_top_referrers(now()-timedelta(days=7), now())[0]
         except:
             return None
+
+    def get_top_screen_width(self, start_date, end_date):
+        screen_width = self.trackers \
+                    .filter(timestamp__gte=start_date, timestamp__lte=end_date) \
+                    .exclude(type_device=Tracker.BOT)\
+                    .values('screen_width')\
+                    .annotate(visits=Count('screen_width'))\
+                    .order_by('-visits')[:10]
+        return screen_width
+
 
     def get_top_pages(self, start_date, end_date):
         pages = self.trackers \

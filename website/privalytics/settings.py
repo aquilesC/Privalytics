@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'bootstrap_daterangepicker',
     'rest_framework',
     'guardian',
+    'django_countries',
 ]
 
 MIDDLEWARE = [

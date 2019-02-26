@@ -1,0 +1,45 @@
+{% load countries %}
+
+<!-- Content Column -->
+<div class="col-lg-8 mb-4">
+    <!-- Project Card Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Visitor Location</h6>
+        </div>
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <div id="world-map">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-lg-4 mb-4">
+
+    <!-- Project Card Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Top Countries</h6>
+        </div>
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <td>Country</td>
+                        <td>Visits</td>
+                    </tr>
+                    </thead>
+                    {% for country in countries %}
+                        <tr>
+                            <td>{% get_country country.0 as c %}
+                                {{ c.name }}</td>
+                            <td>{{ country.1 }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
