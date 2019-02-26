@@ -31,7 +31,7 @@
                         <td>Visits</td>
                     </tr>
                     </thead>
-                    {% for country in countries %}
+                    {% for country in countries|slice:":10" %}
                         <tr>
                             <td>{% get_country country.0 as c %}
                                 {{ c.name }}</td>
