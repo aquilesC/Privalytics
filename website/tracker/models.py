@@ -160,7 +160,7 @@ class Website(models.Model):
             .exclude(country='') \
             .values('country') \
             .annotate(trackers=Count('id')) \
-            .order_by()
+            .order_by('-trackers')
 
         countries_count = []
         for track in trackers:
