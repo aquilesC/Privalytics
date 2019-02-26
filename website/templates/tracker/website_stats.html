@@ -1,5 +1,4 @@
 {% extends 'tracker/base.html' %}
-{% block title %}Privalytics.io | Stats for {{ website }}{% endblock %}
 {% block content %}
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
@@ -18,8 +17,7 @@
                 <!-- Topbar Search -->
                 <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                     <div class="input-group">
-                        <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
-                               aria-label="Search" aria-describedby="basic-addon2">
+                         {{ form.date_range }}
                         <div class="input-group-append">
                             <button class="btn btn-primary" type="button">
                                 <i class="fas fa-search fa-sm"></i>
@@ -232,7 +230,7 @@
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Visitors
                                         </div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ website.monthly_unique }}</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_visitors }}</div>
                                     </div>
                                     <div class="col-auto">
                                         <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -249,8 +247,8 @@
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Top referrer
                                         </div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ website.top_referrer_week.referrer_url|truncatechars:20 }}</div>
-                                        <small>Visits: {{ website.top_referrer_week.visits }}</small>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ referrers.0.referrer_url }}</div>
+                                        <small>Visits: {{ referrers.0.visits }}</small>
                                     </div>
                                     <div class="col-auto">
                                         <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -268,8 +266,8 @@
                                         <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Top Page</div>
                                         <div class="row no-gutters align-items-center">
                                             <div class="col-auto popular-pages">
-                                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ website.popular_pages_30_days.0.page|truncatechars:20 }}<span class="tooltiptext">{{ website.popular_pages_30_days.0.page }}</span></div>
-                                                <small>Visits: {{ website.popular_pages_30_days.0.visits }}</small>
+                                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ pages.0.page|truncatechars:20 }}<span class="tooltiptext">{{ pages.0.page }}</span></div>
+                                                <small>Visits: {{ pages.0.visits }}</small>
                                             </div>
                                         </div>
                                     </div>
@@ -289,7 +287,8 @@
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Top Device
                                         </div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ website.popular_devices_30_days.0.device_label }}</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ devices.device_label.0 }}</div>
+                                        <small>Visits: {{ devices.visits_data.0 }}</small>
                                     </div>
                                     <div class="col-auto">
                                         <i class="fas fa-comments fa-2x text-gray-300"></i>
