@@ -3,24 +3,24 @@ import time
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.exceptions import PermissionDenied, NON_FIELD_ERRORS
-from django.shortcuts import render, get_object_or_404, redirect
+from django.core.exceptions import NON_FIELD_ERRORS
+from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.timezone import now
 from django.views import View
-from django.views.generic import DetailView, CreateView
+from django.views.generic import CreateView
 from django.contrib.auth import login as auth_login
-from accounts.forms import SignUpForm, WebsiteCreationForm, DemoForm
+from accounts.forms import SignUpForm, WebsiteCreationForm
 from accounts.tokens import account_activation_token
 from logs.models import AccountTypeSelected, TimeToStore
 from tracker.models import Website
 
 
 class SignUpView(View):
-    template_name = 'privalytics/sign_up.html'
+    template_name = 'accounts/sign_up.html'
 
     def get(self, request, account_type=None):
         form = SignUpForm()
@@ -72,7 +72,7 @@ class ActivateView(View):
             auth_login(self.request, user, backend='django.contrib.auth.backends.ModelBackend')
             return redirect('account')
         else:
-            return render(self.request, 'privalytics/activation_failed.html')
+            return render(self.request, 'accounts/activation_failed.html')
 
 
 class DashboardView(LoginRequiredMixin, View):
@@ -84,7 +84,7 @@ class DashboardView(LoginRequiredMixin, View):
         websites = request.user.websites.all()
         account_id = request.user.profile.account_id
         ctx.update({'websites': websites, 'account_id': account_id})
-        result = render(request, 'privalytics/dashboard.html', ctx)
+        result = render(request, 'accounts/dashboard.html', ctx)
         t1 = time.time()
         TimeToStore.objects.create(measured_time=t1-t0, measured_type=TimeToStore.MAKE_DASHBOARD)
         return result
@@ -93,7 +93,7 @@ class DashboardView(LoginRequiredMixin, View):
 class CreateWebsite(LoginRequiredMixin, CreateView):
     model = Website
     form_class = WebsiteCreationForm
-    template_name = 'privalytics/new_website.html'
+    template_name = 'accounts/new_website.html'
     success_url = reverse_lazy('account')
 
     def post(self, request, *args, **kwargs):
@@ -109,84 +109,3 @@ class CreateWebsite(LoginRequiredMixin, CreateView):
             return redirect('account')
         return render(request, self.template_name, {'form': form})
 
-
-class WebsiteStats(LoginRequiredMixin, DetailView):
-    model = Website
-    template_name = 'privalytics/website_stats.html'
-    context_object_name = 'website'
-
-    def get_object(self, queryset=None):
-        website = get_object_or_404(Website, website_url=self.kwargs.get('website_url'))
-        if self.request.user.has_perm('can_view_website', website):
-            return website
-        raise PermissionDenied("You do not have permission to view this website")
-
-    def get_context_data(self, **kwargs):
-        context = super(WebsiteStats, self).get_context_data(**kwargs)
-        context['form'] = DemoForm()
-        return context
-
-
-class WebsiteDates(LoginRequiredMixin, View):
-    template_name = 'privalytics/website_dates.html'
-
-    def get(self, request, *args, **kwargs):
-        t0 = time.time()
-        ctx = {}
-        website = get_object_or_404(Website, website_url=kwargs['website_url'])
-        ctx.update({'website': website})
-        form = DemoForm(request.GET)
-        ctx.update({'form': form})
-        if form.is_valid():
-            print(form.cleaned_data['date_range'])
-            start_date = form.cleaned_data['date_range'][0]
-            end_date = form.cleaned_data['date_range'][1]
-            data = website.get_stats_dates(start_date, end_date)
-            ctx.update({'data': data})
-            result = render(request, self.template_name, ctx)
-            t1 = time.time()
-            TimeToStore.objects.create(measured_time=t1-t0, measured_type=TimeToStore.MAKE_WEBSITE_STATS)
-            return result
-        return render(request, self.template_name, ctx)
-
-
-class PublicWebsiteView(DetailView):
-    model = Website
-    template_name = 'privalytics/website_public_stats.html'
-    context_object_name = 'website'
-
-    def get_object(self, queryset=None):
-        website = get_object_or_404(Website, website_url=self.kwargs.get('website_url'))
-        if website.is_public:
-            return website
-        raise PermissionDenied("This website stats are not public")
-
-    def get_context_data(self, **kwargs):
-        context = super(PublicWebsiteView, self).get_context_data(**kwargs)
-        context['form'] = DemoForm()
-        return context
-
-
-class PublicWebsiteDates(LoginRequiredMixin, View):
-    template_name = 'privalytics/website_public_dates.html'
-
-    def get(self, request, *args, **kwargs):
-        t0 = time.time()
-        ctx = {}
-        website = get_object_or_404(Website, website_url=kwargs['website_url'])
-        if not website.is_public:
-            return redirect('index')
-        ctx.update({'website': website})
-        form = DemoForm(request.GET)
-        ctx.update({'form': form})
-        if form.is_valid():
-            print(form.cleaned_data['date_range'])
-            start_date = form.cleaned_data['date_range'][0]
-            end_date = form.cleaned_data['date_range'][1]
-            data = website.get_stats_dates(start_date, end_date)
-            ctx.update({'data': data})
-            result = render(request, self.template_name, ctx)
-            t1 = time.time()
-            TimeToStore.objects.create(measured_time=t1-t0, measured_type=TimeToStore.MAKE_WEBSITE_STATS)
-            return result
-        return render(request, self.template_name, ctx)

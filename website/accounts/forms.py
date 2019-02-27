@@ -2,8 +2,6 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-from bootstrap_daterangepicker import widgets, fields
-
 from tracker.models import Website
 
 
@@ -46,13 +44,3 @@ class WebsiteCreationForm(MyModelForm):
     class Meta:
         model = Website
         fields = ('website_url', 'website_name')
-
-
-class DemoForm(forms.Form):
-    # Date Picker Fields
-        date_range = fields.DateRangeField(
-        input_formats=['%d/%m/%Y'],
-        widget=widgets.DateRangeWidget(
-            format='%d/%m/%Y'
-        )
-    )

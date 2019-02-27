@@ -2,3 +2,8 @@ static_assets/
 geolite
 *.log
 node_modules/
+/yarn.lock
+/test_tracker
+/package.json
+/db.sqlite3
+/privalytics/production_settings.py
