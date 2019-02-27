@@ -1,10 +1,9 @@
 from django.contrib.auth.models import User
 from django.test import TestCase
-from django.urls import reverse, resolve
+from django.urls import reverse
 
 from accounts.forms import SignUpForm
 from accounts.models import Profile
-from accounts.views import SignUpView
 
 
 class SignUpTest(TestCase):

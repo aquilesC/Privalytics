@@ -1,11 +1,9 @@
 from datetime import timedelta
 
-from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.timezone import now
 from django.views import View
 
-from accounts.forms import DemoForm
 from tracker.forms import DateRangeForm
 from tracker.models import Website
 

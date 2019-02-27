@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.contrib.gis.geoip2 import GeoIP2, GeoIP2Exception
 from django.db.models import Count, F
-from django.db.models.functions import TruncHour, TruncDay, TruncMonth
+from django.db.models.functions import TruncHour, TruncDay
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.http import QueryDict
