@@ -17,7 +17,7 @@ django-guardian==1.5.0
 django-ipware==2.1.0
 django-user-agents==0.3.2
 django-widget-tweaks==1.4.3
-djangorestframework==3.9.1
+djangorestframework==3.11.2
 fabric==2.4.0
 geoip2==2.9.0
 idna==2.8
