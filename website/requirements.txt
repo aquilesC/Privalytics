@@ -24,7 +24,7 @@ idna==2.8
 invoke==1.2.0
 Markdown==3.0.1
 maxminddb==1.4.1
-paramiko==2.4.2
+paramiko==2.10.1
 psycopg2-binary==2.7.7
 pyasn1==0.4.5
 pycparser==2.19
